@@ -1,18 +1,20 @@
 
 from music21.chord import Chord
 from music21.scale import MajorScale
-from numpy import array, inf
+from numpy import inf
 from numpy import linalg as la
-from orbichord.chordinates import scalarNormalOrder
+from orbichord.chordinate import scalarDistance
+
 
 scale = MajorScale('C')
 CM = Chord('C E G')
 GM = Chord('G B D')
 
-CM_array = array(scalarNormalOrder(CM, scale))
-GM_array = array(scalarNormalOrder(GM, scale))
-delta = CM_array - GM_array
+distance = scalarDistance(CM, GM, scale, lambda delta: la.norm(delta, inf))
+print('CM-GM maximum norm distance:', distance)
 
-print(CM_array, GM_array)
+distance = scalarDistance(CM, GM, scale, lambda delta: la.norm(delta, 1))
+print('CM-GM taxicab norm distance:', distance)
 
-print('CM-GM maximum norm distance:', la.norm(delta, inf))
+distance = scalarDistance(CM, GM, scale, lambda delta: la.norm(delta, 2))
+print('CM-GM euclidean norm distance:', distance)

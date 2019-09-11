@@ -24,7 +24,9 @@ def scalarPoint(chord: Chord, scale: ConcreteScale) -> list:
     # Loop over pitches and extract scale
     for pitch in chord.pitches:
         point.append(
-            scale.getScaleDegreeFromPitch(pitch) - 1
+            scale.getScaleDegreeFromPitch(
+                pitch, comparisonAttribute='pitchClass'
+            ) - 1
         )
     return sorted(point)
 

@@ -6,18 +6,20 @@ from music21.chord import Chord
 from music21.pitch import Pitch
 from music21.scale import ConcreteScale
 from numpy import array
-import typing
+from typing import Callable
 
 
-def scalarPoint(chord: Chord, scale: ConcreteScale) -> list:
-    """
-    Provide chord scalar point using a given scale steps
+def scalarPoint(
+    chord: Chord,
+    scale: ConcreteScale
+) -> list:
+    """Provide chord scalar point using a given scale steps
 
     Parameters:
-    chrod (Chrod): Chord to stimate normal order
-    scale (ConcreteScale): Scale use a metric
+        chrod (Chrod): Chord to stimate normal order
+        scale (ConcreteScale): Scale use as metric step
     Return:
-    list: List with scalar normal order
+        list: List with scalar normal order
     """
     # Chordinates
     point = []
@@ -52,11 +54,11 @@ def interscalarMatrix(
     Compute the interscalar matrix between two chords
 
     Parameters:
-    chrodA (Chrod): Voice leading start chord
-    chrodA (Chrod): Voice leading end chord
-    scale (ConcreteScale): Scale use a metric
+        chrodA (Chrod): Voice leading start chord
+        chrodA (Chrod): Voice leading end chord
+        scale (ConcreteScale): Scale use a metric
     Return:
-    list: List of voice leading scalar steps
+        list: List of voice leading scalar steps
     """
     pointA = scalarPoint(chordA, scale)
     pointB = scalarPoint(chordB, scale)
@@ -75,34 +77,54 @@ def interscalarMatrix(
     return voice_leadings
 
 
-def efficientVoiceLeading(
-    chordA: Chord,
-    chordB: Chord,
-    scale: ConcreteScale,
-    metric: typing.Callable[[list], float]
-) -> tuple:
-    """
-    Compute efficient voice leading for a given scale and metric
+class EfficientVoiceLeading:
+    """Compute efficient voice leading between two chords."""
 
-    Parameters:
-    chrodA (Chrod): Voice leading start chord
-    chrodA (Chrod): Voice leading end chord
-    scale (ConcreteScale): Scale use a metric
-    metric typing.Callable[[list], float]: Metric function
-    Return:
-    tuple: Efficient voice leading scalar steps and its distance
-    """
-    voice_leading_distance = None
-    voice_leading_index = None
-    matrix = interscalarMatrix(chordA, chordB, scale)
-    for index in range(len(matrix)):
-        voice_leading = matrix[index]
-        distance = metric(voice_leading)
-        if voice_leading_distance is None:
-            voice_leading_distance = distance
-            voice_leading_index = index
-            continue
-        if distance < voice_leading_distance:
-            voice_leading_distance = distance
-            voice_leading_index = index
-    return matrix[voice_leading_index], voice_leading_distance
+    def __init__(self,
+        scale: ConcreteScale,
+        metric: Callable[[list], float]
+    ):
+        """Create a efficient voice leading object
+
+        Parameters:
+            scale (ConcreteScale): Scale use a metric
+            metric Callable[[list], float]: Metric function
+        """
+        self._scale = scale
+        self._metric = metric
+
+    @property
+    def scale(self):
+        return self._scale
+
+    @property
+    def metric(self):
+        return self._metric
+
+    def __call__(self,
+        chordA: Chord,
+        chordB: Chord,
+    ) -> tuple:
+        """
+        Return the efficient voice leading and its distance
+
+        Parameters:
+            chrodA (Chrod): Voice leading start chord
+            chrodA (Chrod): Voice leading end chord
+        Return:
+            tuple: Efficient voice leading scalar steps and its distance
+        """
+        voice_leading_distance = None
+        voice_leading_index = None
+        matrix = interscalarMatrix(chordA, chordB, self._scale)
+        for index in range(len(matrix)):
+            voice_leading = matrix[index]
+            distance = self._metric(voice_leading)
+            if voice_leading_distance is None:
+                voice_leading_distance = distance
+                voice_leading_index = index
+                continue
+            if distance < voice_leading_distance:
+                voice_leading_distance = distance
+                voice_leading_index = index
+        return matrix[voice_leading_index], voice_leading_distance

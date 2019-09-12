@@ -3,12 +3,11 @@ from music21.chord import Chord
 from music21.scale import MinorScale, MajorScale, ChromaticScale
 from numpy import inf
 from numpy import linalg as la
-from orbichord.chordinate import efficientVoiceLeading
+from orbichord.chordinate import EfficientVoiceLeading
 
 
 from music21.pitch import Pitch
 
-reference_scale = ChromaticScale('C')
 D_minor_scale = MinorScale('D')
 E_major_scale = MajorScale('E')
 
@@ -22,12 +21,15 @@ E_major_scale = Chord(E_major_scale.getPitches('E4', 'D#5'))
 print('E major scale == ', E_major_scale)
 # E major scale == <music21.chord.Chord E4 F#4 G#4 A4 B4 C#5 D#5>
 
+voice_leading = EfficientVoiceLeading(
+    scale = ChromaticScale('C'),
+    metric = lambda delta: la.norm(delta, inf)
+)
+
 # Compute efficient voice leading
-vl, dist = efficientVoiceLeading(
+vl, dist = voice_leading(
     D_minor_scale,
     E_major_scale,
-    reference_scale,
-    lambda delta: la.norm(delta, inf)
 )
 
 # Print efficient voice leading

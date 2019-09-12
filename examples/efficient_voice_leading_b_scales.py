@@ -15,12 +15,12 @@ E_major_scale = MajorScale('E')
 # Create a chord using D minor scale pitches
 D_minor_scale = Chord(D_minor_scale.getPitches('D4', 'C5'))
 print('D minor scale == ', D_minor_scale)
-# <music21.chord.Chord D4 E4 F4 G4 A4 B-4 C5>
+# D minor scale == <music21.chord.Chord D4 E4 F4 G4 A4 B-4 C5>
 
 # Create a chord using C# minor scale pitches
 E_major_scale = Chord(E_major_scale.getPitches('E4', 'D#5'))
 print('E major scale == ', E_major_scale)
-# <music21.chord.Chord C#4 D#4 E4 F#4 G#4 A4 B4>
+# E major scale == <music21.chord.Chord E4 F#4 G#4 A4 B4 C#5 D#5>
 
 # Compute efficient voice leading
 vl, dist = efficientVoiceLeading(

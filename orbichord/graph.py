@@ -1,8 +1,9 @@
 """Create a graph with chords as nodes."""
 
+from music21.chord import Chord
+from music21.scale import ConcreteScale
 from orbichord.chordinate import EfficientVoiceLeading
 from orbichord.generator import Generator
-from music21.scale import ConcreteScale
 from typing import Callable
 
 
@@ -57,3 +58,39 @@ def createGraph(
         # Add new strength
         strengths.append(strength)
     return nodes, adjacencies, strengths
+
+
+def convertGraphToDataset(
+    graph: tuple,
+    label: Callable[[Chord], str] = None,
+    identify: Callable[[Chord], str] = None
+):
+    """Convert a chrod graph to columnal dataset."""
+
+    nodes, adjacencies, strengths = graph
+
+    vetoed_nodes = set()
+
+    vertexes= []
+    links = []
+
+    for source in range(len(nodes)):
+        node = nodes[source]
+        if identify(node) in vetoed_nodes:
+            continue
+        vertexes.append({
+            'name': label(node),
+            'group': 1
+        })
+        for tindex in range(len(adjacencies[source])):
+            target = adjacencies[source][tindex]
+            value = strengths[source][tindex]
+            links.append({
+                'source': source,
+                'target': target,
+                'value': value
+            })
+    return {
+        'links': links,
+        'nodes': vertexes
+    }

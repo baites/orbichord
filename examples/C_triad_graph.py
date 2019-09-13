@@ -32,7 +32,7 @@ for index in range(len(nodes)):
     for nindex in range(len(adjacencies[index])):
         neighbor = adjacencies[index][nindex]
         strength = strengths[index][nindex]
-        string = string + ' {}: {},'.format(
+        string = string + ' {} ({}),'.format(
             nodes[neighbor].pitchedCommonName, strength
         )
     print(string[:-1])

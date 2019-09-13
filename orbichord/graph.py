@@ -18,20 +18,23 @@ def createGraph(
         voice_leading (EfficientVoiceLeading): A voice leading object
         tolerance (Callable[[float], bool]): Tolerance function
     Return:
-        ntuple: List of node and adjacency lists
+        tuple: containing graph node, adjacency, and strength lists
     """
     # Adjacency list
-    adjacencies = []
     nodes = []
+    adjacencies = []
+    strengths = []
     # Loop over all chords
     for chord in generator.run():
         # Add the first node
         if len(nodes) == 0:
             nodes.append(chord)
             adjacencies.append([])
+            strengths.append([])
             continue
         # Loop over the nodes
         adjacency = []
+        strength = []
         number_nodes = len(nodes)
         for index in range(number_nodes):
             node = nodes[index]
@@ -43,8 +46,14 @@ def createGraph(
                 adjacency.append(index)
                 # Add chord to previous adjancy
                 adjacencies[index].append(number_nodes)
+                # Add node strength
+                strength.append(distance)
+                # Add chord distance to the node
+                strengths[index].append(distance)
         # Add chrod as a node
         nodes.append(chord)
         # Add new adjacency
         adjacencies.append(adjacency)
-    return nodes, adjacencies
+        # Add new strength
+        strengths.append(strength)
+    return nodes, adjacencies, strengths

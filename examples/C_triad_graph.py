@@ -12,7 +12,7 @@ chord_generator = Generator(
     dimension=3,
     pitches=scale.getPitches('C','B'),
     identify=lambda chord: chord.orderedPitchClassesString,
-    filter=lambda chord: chord.isTriad()
+    select=lambda chord: chord.isTriad()
 )
 
 max_norm_vl = EfficientVoiceLeading(

@@ -17,4 +17,8 @@ chord_generator = Generator(
 )
 
 for chord in chord_generator.run():
-    print(chord.pitchedCommonName)
+    print(
+        chord,
+        chord.orderedPitchClassesString,
+        chord.pitchedCommonName
+    )

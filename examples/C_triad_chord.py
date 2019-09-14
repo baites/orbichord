@@ -6,16 +6,22 @@ their ordered pitch class string that are also triads.
 """
 
 from orbichord.generator import Generator
+from music21.harmony import chordSymbolFigureFromChord
 from music21.scale import MajorScale
 
 scale = MajorScale('C')
 
 chord_generator = Generator(
-    dimension=3,
-    pitches=scale.getPitches('C','B'),
-    identify=lambda chord: chord.orderedPitchClassesString,
-    filter=lambda chord: chord.isTriad()
+    dimension = 3,
+    pitches = scale.getPitches('C','B'),
+    identify = lambda chord: chord.orderedPitchClassesString,
+    select = lambda chord: chord.isTriad()
 )
 
 for chord in chord_generator.run():
-    print(chord.pitchedCommonName)
+    print(
+        chord,
+        chord.orderedPitchClassesString,
+        chord.pitchedCommonName,
+        chordSymbolFigureFromChord(chord)
+    )

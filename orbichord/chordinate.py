@@ -15,11 +15,16 @@ def scalarPoint(
 ) -> list:
     """Provide chord scalar point using a given scale steps
 
-    Parameters:
-        chrod (Chrod): Chord to stimate normal order
-        scale (ConcreteScale): Scale use as metric step
-    Return:
-        list: List with scalar normal order
+    Parameters
+    ----------
+        chrod : Chrod
+            Chord to estimate normal order
+        scale : ConcreteScale
+            Scale use as metric step
+    Return
+    ------
+        list
+            List with scalar normal order
     """
     # Chordinates
     point = []
@@ -34,8 +39,7 @@ def scalarPoint(
 
 
 def mod(x, y, d):
-    """
-    Implement a modify module to provide
+    """Implement a modify module to provide
     shortest possible voice leading.
     """
     positive = (x - y) % d
@@ -50,15 +54,20 @@ def interscalarMatrix(
     chordB: Chord,
     scale: ConcreteScale
 ) -> list:
-    """
-    Compute the interscalar matrix between two chords
+    """Compute the interscalar matrix between two chords
 
-    Parameters:
-        chrodA (Chrod): Voice leading start chord
-        chrodA (Chrod): Voice leading end chord
-        scale (ConcreteScale): Scale use a metric
-    Return:
-        list: List of voice leading scalar steps
+    Parameters
+    ----------
+        chrodA : Chrod
+            Voice leading start chord
+        chrodA : Chrod
+            Voice leading end chord
+        scale : ConcreteScale
+            Scale use a metric
+    Return
+    ------
+        list
+            List of voice leading scalar steps
     """
     pointA = scalarPoint(chordA, scale)
     pointB = scalarPoint(chordB, scale)
@@ -86,9 +95,12 @@ class EfficientVoiceLeading:
     ):
         """Create a efficient voice leading object
 
-        Parameters:
-            scale (ConcreteScale): Scale use a metric
-            metric Callable[[list], float]: Metric function
+        Parameters
+        ----------
+            scale : ConcreteScale
+                Scale use a metric
+            metric : Callable[[list], float]
+                Metric function
         """
         self._scale = scale
         self._metric = metric
@@ -105,14 +117,18 @@ class EfficientVoiceLeading:
         chordA: Chord,
         chordB: Chord,
     ) -> tuple:
-        """
-        Return the efficient voice leading and its distance
+        """Return the efficient voice leading and its distance
 
-        Parameters:
-            chrodA (Chrod): Voice leading start chord
-            chrodA (Chrod): Voice leading end chord
-        Return:
-            tuple: Efficient voice leading scalar steps and its distance
+        Parameters
+        ----------
+            chrodA : Chrod
+                Voice leading start chord
+            chrodA : Chrod
+                Voice leading end chord
+        Return
+        ------
+            tuple
+                Efficient voice leading scalar steps and its distance
         """
         voice_leading_distance = None
         voice_leading_index = None

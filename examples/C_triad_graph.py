@@ -20,7 +20,7 @@ max_norm_vl = EfficientVoiceLeading(
     metric = lambda delta: la.norm(delta, inf)
 )
 
-nodes, adjacencies, strengths = createGraph(
+nodes, adjacencies, weights = createGraph(
     generator = chord_generator,
     voice_leading = max_norm_vl,
     tolerance = lambda x: x <= 1.0
@@ -31,7 +31,7 @@ for index in range(len(nodes)):
     string = node.pitchedCommonName + ': '
     for nindex in range(len(adjacencies[index])):
         neighbor = adjacencies[index][nindex]
-        strength = strengths[index][nindex]
+        strength = weights[index][nindex]
         string = string + ' {} ({}),'.format(
             nodes[neighbor].pitchedCommonName, strength
         )

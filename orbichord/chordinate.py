@@ -87,7 +87,14 @@ def interscalarMatrix(
 
 
 class EfficientVoiceLeading:
-    """Compute efficient voice leading between two chords."""
+    """
+    Compute efficient voice leading between two chords.
+
+    Attributes
+    ----------
+    scale
+    metric
+    """
 
     def __init__(self,
         scale: ConcreteScale,
@@ -98,7 +105,7 @@ class EfficientVoiceLeading:
         Parameters
         ----------
             scale : ConcreteScale
-                Scale use a metric
+                Scale use to define voice leading steps
             metric : Callable[[list], float]
                 Metric function
         """
@@ -107,10 +114,12 @@ class EfficientVoiceLeading:
 
     @property
     def scale(self):
+        """Returns voice leaging scale."""
         return self._scale
 
     @property
     def metric(self):
+        """Returns voice leaging metric."""
         return self._metric
 
     def __call__(self,

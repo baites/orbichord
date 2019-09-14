@@ -14,28 +14,37 @@ def createGraph(
 ) -> tuple:
     """Create a graph as adjacency list of chords.
 
-    Parameters:
-        generator (Generator): An orbichord generator
-        voice_leading (EfficientVoiceLeading): A voice leading object
-        tolerance (Callable[[float], bool]): Tolerance function
+    Parameters
+    ----------
+        generator : Generator
+            An orbichord generator.
+        voice_leading : EfficientVoiceLeading
+            A voice leading object.
+        tolerance : Callable[[float], bool]
+            Tolerance function.
     Return:
-        tuple: containing graph node, adjacency, and strength lists
+        nodes: list
+            Graph node.
+        adjacencies: list
+            Graph adjacencies
+        weights: list
+            weight lists.
     """
     # Adjacency list
     nodes = []
     adjacencies = []
-    strengths = []
+    weights = []
     # Loop over all chords
     for chord in generator.run():
         # Add the first node
         if len(nodes) == 0:
             nodes.append(chord)
             adjacencies.append([])
-            strengths.append([])
+            weights.append([])
             continue
         # Loop over the nodes
         adjacency = []
-        strength = []
+        weight = []
         number_nodes = len(nodes)
         for index in range(number_nodes):
             node = nodes[index]
@@ -47,50 +56,63 @@ def createGraph(
                 adjacency.append(index)
                 # Add chord to previous adjancy
                 adjacencies[index].append(number_nodes)
-                # Add node strength
-                strength.append(distance)
+                # Add node weight
+                weight.append(distance)
                 # Add chord distance to the node
-                strengths[index].append(distance)
+                weights[index].append(distance)
         # Add chrod as a node
         nodes.append(chord)
         # Add new adjacency
         adjacencies.append(adjacency)
-        # Add new strength
-        strengths.append(strength)
-    return nodes, adjacencies, strengths
+        # Add new weight
+        weights.append(weight)
+    return nodes, adjacencies, weights
 
 
-def convertGraphToDataset(
+def convertGraphToData(
     graph: tuple,
     label: Callable[[Chord], str] = None,
     identify: Callable[[Chord], str] = None
 ):
-    """Convert a chrod graph to columnal dataset."""
+    """Convert a chrod graph to columnal dataset.
 
-    nodes, adjacencies, strengths = graph
+    Parameters
+    ----------
+        graph : tuple
+            A tuple containing graph nodes, adjacencies, and weights.
+        label : Callable[[Chord], str]
+            Function to name chords.
+        identify : Callable[[Chord], str]
+            Function to identify identical chords.
+
+    Return
+    ------
+        edges : list
+            List of graph edges.
+        vertices : list
+            List of vertices
+    """
+    nodes, adjacencies, weights = graph
 
     vetoed_nodes = set()
 
-    vertexes= []
-    links = []
+    vertices= []
+    edges = []
 
     for source in range(len(nodes)):
         node = nodes[source]
         if identify(node) in vetoed_nodes:
             continue
-        vertexes.append({
+        vertices.append({
             'name': label(node),
             'group': 1
         })
         for tindex in range(len(adjacencies[source])):
             target = adjacencies[source][tindex]
-            value = strengths[source][tindex]
-            links.append({
+            value = weights[source][tindex]
+            edges.append({
                 'source': source,
                 'target': target,
                 'value': value
             })
-    return {
-        'links': links,
-        'nodes': vertexes
-    }
+    return edges, vertices

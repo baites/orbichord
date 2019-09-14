@@ -3,7 +3,7 @@ from music21.scale import MajorScale
 from numpy import inf
 from numpy import linalg as la
 from orbichord.chordinate import EfficientVoiceLeading
-from orbichord.graph import createGraph, convertGraphToDataset
+from orbichord.graph import createGraph, convertGraphToData
 from orbichord.generator import Generator
 
 scale = MajorScale('C')

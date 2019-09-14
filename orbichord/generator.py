@@ -24,6 +24,13 @@ class Generator:
 
     You can further restrict the generation of chords by passing a filter
     function that restricts the type of chords yielded by the generator.
+
+    Attributes
+    ----------
+    pitches
+    dimension
+    identity
+    filter
     """
 
     def __init__(self,
@@ -34,11 +41,20 @@ class Generator:
     ):
         """Initialize the generator (Constructor).
 
-        Parameters:
-            pitches (list): List of music21.pitch.Pitch
-            dimension (int): Dimension of the space
-            identify (Callable[Chord, str]): Funtion to indentify chords
-            filter (Callable[Chord, str]): Function to filter chords
+        Parameters
+        ----------
+            pitches : list
+                List of music21.pitch.Pitch.
+            dimension : int
+                Dimension of the space.
+            identify : Callable[Chord, str]
+                Funtion to indentify chords.
+            filter : Callable[Chord, str]
+                Function to filter chords.
+        Raises:
+        -------
+            ValueError
+                if the dimension is negative.
         """
         # Sanity checks
         if dimension <= 0:
@@ -72,8 +88,10 @@ class Generator:
     def run(self) -> typing.Iterator[Chord]:
         """Generate a sequence of chords.
 
-        Yields:
-            typing.Iterator[Chord]: an iterator to the chords in the space
+        Yields
+        ------
+            typing.Iterator[Chord]
+                An iterator to the chords in the space.
         """
         # List of identified chords
         identitied_chords = set()

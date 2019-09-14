@@ -1,7 +1,7 @@
 """Generate quotient space of n-pich classes."""
 
-import itertools
-import typing
+from itertools import combinations_with_replacement
+from typing import Callable, Iterable, Iterator
 from music21.chord import Chord
 
 
@@ -29,15 +29,20 @@ class Generator:
     ----------
     pitches
     dimension
+    combinator
     identity
     select
     """
 
     def __init__(self,
         pitches: list,
-        dimension: int,
-        identify: typing.Callable[[Chord], str] = None,
-        select: typing.Callable[[Chord], bool] = None
+        dimension: int = 3,
+        combinator: Callable[[Iterable, int], Iterator] =\
+            combinations_with_replacement,
+        identify: Callable[[Chord], str] = \
+            lambda chord: chord.orderedPitchClassesString,
+        select: Callable[[Chord], bool] = \
+            lambda chord: chord.isTriad()
     ):
         """Initialize the generator (Constructor).
 
@@ -45,11 +50,13 @@ class Generator:
         ----------
             pitches : list
                 List of music21.pitch.Pitch.
-            dimension : int
+            dimension : int, optional
                 Dimension of the space.
-            identify : Callable[Chord, str]
+            combinator : Callable[[Iterable, int], Iterator], optional
+                Iterator function to generate all chord combinations.
+            identify : Callable[Chord, str], optional
                 Funtion to indentify chords.
-            select : Callable[Chord, str]
+            select : Callable[Chord, str], optional
                 Function to select chords.
         Raises:
         -------
@@ -62,6 +69,7 @@ class Generator:
         # Setting private values
         self._pitches = pitches
         self._dimension = dimension
+        self._combinator = combinator
         self._identify = identify
         self._select = select
 
@@ -72,8 +80,13 @@ class Generator:
 
     @property
     def dimension(self):
-        """Return the the generator dimension."""
+        """Return the generator dimension."""
         return self._dimension
+
+    @property
+    def combinator(self):
+        """Return the generator combinator."""
+        return self._combinator
 
     @property
     def identify(self):
@@ -85,12 +98,12 @@ class Generator:
         """Return function to select chords."""
         return self._select
 
-    def run(self) -> typing.Iterator[Chord]:
+    def run(self) -> Iterator[Chord]:
         """Generate a sequence of chords.
 
         Yields
         ------
-            typing.Iterator[Chord]
+            Iterator[Chord]
                 An iterator to the chords in the space.
         """
         # List of identified chords
@@ -98,7 +111,7 @@ class Generator:
 
         # Sample the chord space as combination with
         # replacement of the scale pitches.
-        for ntuple in itertools.combinations_with_replacement(
+        for ntuple in self._combinator(
             self._pitches, self._dimension
         ):
             # Generate the chord

@@ -35,7 +35,7 @@ def scalarPoint(
                 pitch, comparisonAttribute='pitchClass'
             ) - 1
         )
-    return sorted(point)
+    return point
 
 
 def mod(x, y, d):
@@ -47,6 +47,38 @@ def mod(x, y, d):
     if positive > negative:
         return -negative
     return positive
+
+
+def interscalarVector(
+    chordA: Chord,
+    chordB: Chord,
+    scale: ConcreteScale
+) -> list:
+    """Compute the interscalar distance between two chords
+
+    Parameters
+    ----------
+        chrodA : Chrod
+            Voice leading start chord
+        chrodA : Chrod
+            Voice leading end chord
+        scale : ConcreteScale
+            Scale use a metric
+    Return
+    ------
+        list
+            Voice leading scalar steps
+    """
+    pointA = scalarPoint(chordA, scale)
+    pointB = scalarPoint(chordB, scale)
+    if len(pointA) != len(pointB):
+        raise ValueError('Chords are not of the same dimension!')
+    dimension = len(pointA)
+    max_scale_degree = scale.getDegreeMaxUnique()
+    delta = [0]*dimension
+    for i in range(dimension):
+        delta[i] = mod(pointB[i], pointA[i], max_scale_degree)
+    return delta
 
 
 def interscalarMatrix(
@@ -69,8 +101,8 @@ def interscalarMatrix(
         list
             List of voice leading scalar steps
     """
-    pointA = scalarPoint(chordA, scale)
-    pointB = scalarPoint(chordB, scale)
+    pointA = sorted(scalarPoint(chordA, scale))
+    pointB = sorted(scalarPoint(chordB, scale))
     if len(pointA) != len(pointB):
         raise ValueError('Chords are not of the same dimension!')
     dimension = len(pointA)
@@ -84,6 +116,64 @@ def interscalarMatrix(
             delta[i] = mod(pointB[i], pointA[i], max_scale_degree)
         voice_leadings.append(delta)
     return voice_leadings
+
+
+class VoiceLeading:
+    """
+    Compute efficient voice leading between two chords.
+
+    Attributes
+    ----------
+    scale
+    metric
+    """
+
+    def __init__(self,
+        scale: ConcreteScale,
+        metric: Callable[[list], float]
+    ):
+        """Create a efficient voice leading object
+
+        Parameters
+        ----------
+            scale : ConcreteScale
+                Scale use to define voice leading steps
+            metric : Callable[[list], float]
+                Metric function
+        """
+        self._scale = scale
+        self._metric = metric
+
+    @property
+    def scale(self):
+        """Returns voice leaging scale."""
+        return self._scale
+
+    @property
+    def metric(self):
+        """Returns voice leaging metric."""
+        return self._metric
+
+    def __call__(self,
+        chordA: Chord,
+        chordB: Chord,
+    ) -> tuple:
+        """Return the efficient voice leading and its distance
+
+        Parameters
+        ----------
+            chrodA : Chrod
+                Voice leading start chord
+            chrodA : Chrod
+                Voice leading end chord
+        Return
+        ------
+            tuple
+                Efficient voice leading scalar steps and its distance
+        """
+        delta = interscalarVector(chordA, chordB, self._scale)
+        distance = self._metric(delta)
+        return delta, distance
 
 
 class EfficientVoiceLeading:

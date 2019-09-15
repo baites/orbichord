@@ -1,5 +1,6 @@
 """Generate quotient space of n-pich classes."""
 
+import copy
 from itertools import combinations_with_replacement
 from typing import Callable, Iterable, Iterator
 from music21.chord import Chord
@@ -98,6 +99,21 @@ class Generator:
         """Return function to select chords."""
         return self._select
 
+    @staticmethod
+    def normalize_octaves(pitches):
+        """Make chord octive consistent with their
+        location within the chord."""
+        pitches = copy.deepcopy(pitches)
+        octave = pitches[0].octave
+        for index in range(len(pitches)):
+            pitches[index].octave -= octave
+        for index in range(1, len(pitches)):
+            prev = pitches[index-1]
+            curr = pitches[index]
+            while prev > curr:
+                curr.octave += 1
+        return pitches
+
     def run(self) -> Iterator[Chord]:
         """Generate a sequence of chords.
 
@@ -115,7 +131,9 @@ class Generator:
             self._pitches, self._dimension
         ):
             # Generate the chord
-            chord = Chord(ntuple)
+            chord = Chord(
+                self.normalize_octaves(ntuple)
+            )
             # Identify the chord
             if self._identify:
                 identity = self._identify(chord)

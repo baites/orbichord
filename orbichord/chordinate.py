@@ -109,12 +109,12 @@ def interscalarMatrix(
     voice_leadings = []
     max_scale_degree = scale.getDegreeMaxUnique()
     while pointB[0] < max_scale_degree:
-        tmp = pointB[0]
-        pointB = pointB[1:] + [tmp + max_scale_degree]
         delta = [0]*dimension
         for i in range(dimension):
             delta[i] = mod(pointB[i], pointA[i], max_scale_degree)
         voice_leadings.append(delta)
+        tmp = pointB[0]
+        pointB = pointB[1:] + [tmp + max_scale_degree]
     return voice_leadings
 
 
@@ -176,41 +176,16 @@ class VoiceLeading:
         return delta, distance
 
 
-class EfficientVoiceLeading:
+class EfficientVoiceLeading(VoiceLeading):
     """
     Compute efficient voice leading between two chords.
-
-    Attributes
-    ----------
-    scale
-    metric
     """
 
     def __init__(self,
         scale: ConcreteScale,
         metric: Callable[[list], float]
     ):
-        """Create a efficient voice leading object
-
-        Parameters
-        ----------
-            scale : ConcreteScale
-                Scale use to define voice leading steps
-            metric : Callable[[list], float]
-                Metric function
-        """
-        self._scale = scale
-        self._metric = metric
-
-    @property
-    def scale(self):
-        """Returns voice leaging scale."""
-        return self._scale
-
-    @property
-    def metric(self):
-        """Returns voice leaging metric."""
-        return self._metric
+        super().__init__(scale, metric)
 
     def __call__(self,
         chordA: Chord,

@@ -29,10 +29,12 @@ nodes, adjacencies, weights = createGraph(
 
 for index in range(len(nodes)):
     node = nodes[index]
-    string = node.pitchedCommonName + ': '
+    node.inversion(0)
+    string =chordSymbolFigureFromChord(node) + ': '
     for nindex in range(len(adjacencies[index])):
         neighbor = adjacencies[index][nindex]
         strength = weights[index][nindex]
+        nodes[neighbor].inversion(0)
         string = string + ' {} ({}),'.format(
             chordSymbolFigureFromChord(nodes[neighbor]), strength
         )

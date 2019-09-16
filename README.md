@@ -53,11 +53,11 @@ $ workon orbichord
 
 * Start jupyter lab
 
-* Examples:
-  * Pure python examples in ./example directory.
-  * Jupyter notebook example in ./jupyter directory.
-
 ```bash
 $ cd {location of orbifold}
 $ jupyter lab
 ```
+
+* Examples:
+  * Pure python examples in ./example directory.
+  * Jupyter notebook example in ./jupyter directory.

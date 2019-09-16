@@ -43,10 +43,21 @@ $ jupyter kernelspec list
 jupyter kernelspec remove myenv
 ```
 
-* Intall holoviews
+* Install holoviews
 
 ```bash
 $ workon orbichord
 (orbichord)$ pip install "holoviews[recommended]"
 (orbichord)$ pip install networkx
+```
+
+* Start jupyter lab
+
+* Examples:
+  * Pure python examples in ./example directory.
+  * Jupyter notebook example in ./jupyter directory.
+
+```bash
+$ cd {location of orbifold}
+$ jupyter lab
 ```

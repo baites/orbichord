@@ -103,10 +103,13 @@ class Generator:
     def normalize_octaves(pitches):
         """Make chord octive consistent with their
         location within the chord."""
-        pitches = copy.deepcopy(pitches)
         octave = pitches[0].octave
-        for index in range(len(pitches)):
-            pitches[index].octave -= octave
+        new_pitches = []
+        for pitch in pitches:
+            new_pitch = copy.deepcopy(pitch)
+            new_pitch.octave -= octave
+            new_pitches.append(new_pitch)
+        pitches = new_pitches
         for index in range(1, len(pitches)):
             prev = pitches[index-1]
             curr = pitches[index]

@@ -100,7 +100,7 @@ class Generator:
         return self._select
 
     @staticmethod
-    def normalize_octaves(pitches):
+    def _copy_fix_octaves(pitches):
         """Make chord octive consistent with their
         location within the chord."""
         octave = pitches[0].octave
@@ -135,7 +135,7 @@ class Generator:
         ):
             # Generate the chord
             chord = Chord(
-                self.normalize_octaves(ntuple)
+                self._copy_fix_octaves(ntuple)
             )
             # Identify the chord
             if self._identify:

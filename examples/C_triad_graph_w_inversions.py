@@ -6,6 +6,7 @@ from numpy import linalg as la
 from orbichord.chordinate import VoiceLeading
 from orbichord.graph import createGraph, convertGraphToData
 from orbichord.generator import Generator
+import orbichord.identify as identify
 
 def combinator(iterable, dimension):
     return itertools.product(iterable, repeat = dimension)
@@ -15,7 +16,7 @@ scale = MajorScale('C')
 chord_generator = Generator(
     pitches = scale.getPitches('C','B'),
     combinator = combinator,
-    identify = chordSymbolFigureFromChord,
+    identify = identify.chordPitchNames,
     select = lambda chord: chord.isTriad()
 )
 
@@ -32,11 +33,15 @@ nodes, adjacencies, weights = createGraph(
 
 for index in range(len(nodes)):
     node = nodes[index]
-    string = chordSymbolFigureFromChord(node) + ': '
+    string = ' {} ({}): '.format(
+        chordSymbolFigureFromChord(nodes[index]),
+        identify.chordPitchNames(nodes[index])
+    )
     for nindex in range(len(adjacencies[index])):
         neighbor = adjacencies[index][nindex]
-        strength = weights[index][nindex]
+        weight = weights[index][nindex]
         string = string + ' {} ({}),'.format(
-            chordSymbolFigureFromChord(nodes[neighbor]), strength
+            chordSymbolFigureFromChord(nodes[neighbor]),
+            identify.chordPitchNames(nodes[neighbor])
         )
     print(string[:-1])

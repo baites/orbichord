@@ -82,8 +82,6 @@ def convertGraphToData(
             A tuple containing graph nodes, adjacencies, and weights.
         label : Callable[[Chord], str]
             Function to name chords.
-        identify : Callable[[Chord], str]
-            Function to identify identical chords.
 
     Return
     ------
@@ -94,15 +92,11 @@ def convertGraphToData(
     """
     nodes, adjacencies, weights = graph
 
-    vetoed_nodes = set()
-
     vertices= []
     edges = []
 
     for source in range(len(nodes)):
         node = nodes[source]
-        if identify(node) in vetoed_nodes:
-            continue
         vertices.append({
             'name': label(node),
             'group': 1

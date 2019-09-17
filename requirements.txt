@@ -1,5 +1,6 @@
-matplotlib  
+matplotlib
 music21
+networkx
 numpy
 pbr
 tox

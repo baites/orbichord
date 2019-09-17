@@ -6,6 +6,52 @@ from typing import Callable, Iterable, Iterator
 from music21.chord import Chord
 
 
+class IdentifiedChord(Chord):
+    """Extend Chord to be a hashable object.
+
+    The hash is contructed from a indentity function that
+    map a chord in to a string.
+
+    Attributes
+    ----------
+    indentify
+    """
+
+    def __init__(self,
+        identify : Callable[[Chord], str],
+        notes=None,
+        **keywords
+    ):
+        """Initialize a hashable chord.
+
+        Parameters
+        ----------
+            identify : Callable[Chord, str]
+                Funtion to indentify chords.
+            notes
+                Argument pass to chord constructor.
+            keywords
+                Argument pass to chord constructor.
+        """
+        super().__init__(notes, **keywords)
+        self._identify = identify
+
+    def __hash__(self):
+        """Return a has of the string."""
+        return hash(self._identify(self))
+
+    def __eq__(self, other):
+        """Overload comparison based hashable implementation."""
+        if not isinstance(other, IdentifiedChord):
+            return False
+        return hash(self) == hash(other)
+
+    @property
+    def identify(self):
+        """Return identity string."""
+        return self._identify
+
+
 class Generator:
     """Generate the space of n-pitches chords.
 
@@ -126,7 +172,7 @@ class Generator:
                 An iterator to the chords in the space.
         """
         # List of identified chords
-        identitied_chords = set()
+        vetoed_chords = set()
 
         # Sample the chord space as combination with
         # replacement of the scale pitches.
@@ -134,15 +180,14 @@ class Generator:
             self._pitches, self._dimension
         ):
             # Generate the chord
-            chord = Chord(
-                self._copy_fix_octaves(ntuple)
+            chord = IdentifiedChord(
+                identify = self._identify,
+                notes = self._copy_fix_octaves(ntuple)
             )
-            # Identify the chord
-            if self._identify:
-                identity = self._identify(chord)
-                if identity in identitied_chords:
-                    continue
-                identitied_chords.add(identity)
+            # Veto identical chords
+            if chord in vetoed_chords:
+                continue
+            vetoed_chords.add(chord)
             # select the chord?
             if self._select and not self._select(chord):
                 continue

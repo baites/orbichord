@@ -21,21 +21,18 @@ max_norm_vl = EfficientVoiceLeading(
     metric = lambda delta: la.norm(delta, inf)
 )
 
-nodes, adjacencies, weights = createGraph(
+graph = createGraph(
     generator = chord_generator,
     voice_leading = max_norm_vl,
     tolerance = lambda x: x <= 1.0
 )
 
-for index in range(len(nodes)):
-    node = nodes[index]
+for node, neighbors in graph.adjacency():
     node.inversion(0)
     string =chordSymbolFigureFromChord(node) + ': '
-    for nindex in range(len(adjacencies[index])):
-        neighbor = adjacencies[index][nindex]
-        strength = weights[index][nindex]
-        nodes[neighbor].inversion(0)
+    for neighbor, edge in neighbors.items():
+        neighbor.inversion(0)
         string = string + ' {} ({}),'.format(
-            chordSymbolFigureFromChord(nodes[neighbor]), strength
+            chordSymbolFigureFromChord(neighbor), edge['distance']
         )
     print(string[:-1])

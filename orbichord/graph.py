@@ -2,6 +2,7 @@
 
 from music21.chord import Chord
 from music21.scale import ConcreteScale
+from networkx import Graph
 from orbichord.chordinate import EfficientVoiceLeading
 from orbichord.generator import Generator
 from typing import Callable
@@ -11,7 +12,7 @@ def createGraph(
     generator: Generator,
     voice_leading: EfficientVoiceLeading,
     tolerance: Callable[[float], bool]
-) -> tuple:
+) -> Graph:
     """Create a graph as adjacency list of chords.
 
     Parameters
@@ -23,50 +24,36 @@ def createGraph(
         tolerance : Callable[[float], bool]
             Tolerance function.
     Return:
-        nodes: list
-            Graph node.
-        adjacencies: list
-            Graph adjacencies
-        weights: list
-            weight lists.
+        graph: Graph
+            Networkx Graph object.
     """
     # Adjacency list
-    nodes = []
-    adjacencies = []
-    weights = []
-    # Loop over all chords
-    for chord in generator.run():
-        # Add the first node
-        if len(nodes) == 0:
-            nodes.append(chord)
-            adjacencies.append([])
-            weights.append([])
-            continue
-        # Loop over the nodes
-        adjacency = []
-        weight = []
-        number_nodes = len(nodes)
-        for index in range(number_nodes):
-            node = nodes[index]
+    graph = Graph()
+    # Add the chords as nodes in graph
+    graph.add_nodes_from(
+        generator.run()
+    )
+    # Compute edges
+    vetoed_nodes = set()
+    # Loop over all source nodes
+    for source in graph.nodes:
+        # Vetoed source
+        vetoed_nodes.add(source)
+        # Loop over all target nodes
+        for target in graph.nodes:
+            # Check node is vetoed
+            if target in vetoed_nodes:
+                continue
             # Compute distance of efficient leading voice
-            _, distance = voice_leading(chord, node)
-            # If within tolerance
+            _, distance = voice_leading(source, target)
+            # If within tolerance add edge
             if tolerance(distance):
-                # Add node to new adjancy
-                adjacency.append(index)
-                # Add chord to previous adjancy
-                adjacencies[index].append(number_nodes)
-                # Add node weight
-                weight.append(distance)
-                # Add chord distance to the node
-                weights[index].append(distance)
-        # Add chrod as a node
-        nodes.append(chord)
-        # Add new adjacency
-        adjacencies.append(adjacency)
-        # Add new weight
-        weights.append(weight)
-    return nodes, adjacencies, weights
+                graph.add_edge(
+                    source,
+                    target,
+                    distance = distance
+                )
+    return graph
 
 
 def convertGraphToData(

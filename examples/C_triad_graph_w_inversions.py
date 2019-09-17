@@ -1,6 +1,7 @@
 import itertools
 from music21.harmony import chordSymbolFigureFromChord
 from music21.scale import MajorScale
+from networkx import connected_components
 from numpy import inf
 from numpy import linalg as la
 from orbichord.chordinate import VoiceLeading
@@ -25,23 +26,37 @@ max_norm_vl = VoiceLeading(
     metric = lambda delta: la.norm(delta, inf)
 )
 
-nodes, adjacencies, weights = createGraph(
+graph = createGraph(
     generator = chord_generator,
     voice_leading = max_norm_vl,
     tolerance = lambda x: x <= 1.0
 )
 
-for index in range(len(nodes)):
-    node = nodes[index]
+for node, neighbors in graph.adjacency():
     string = ' {} ({}): '.format(
-        chordSymbolFigureFromChord(nodes[index]),
-        identify.chordPitchNames(nodes[index])
+        chordSymbolFigureFromChord(node),
+        identify.chordPitchNames(node)
     )
-    for nindex in range(len(adjacencies[index])):
-        neighbor = adjacencies[index][nindex]
-        weight = weights[index][nindex]
+    for neighbor, edge in neighbors.items():
         string = string + ' {} ({}),'.format(
-            chordSymbolFigureFromChord(nodes[neighbor]),
-            identify.chordPitchNames(nodes[neighbor])
+            chordSymbolFigureFromChord(neighbor),
+            identify.chordPitchNames(neighbor)
+        )
+    print(string[:-1])
+
+good_twin, evil_twin = (graph.subgraph(c) for c in connected_components(graph))
+
+print()
+print('Evil twin graph component')
+
+for node, neighbors in evil_twin.adjacency():
+    string = ' {} ({}): '.format(
+        chordSymbolFigureFromChord(node),
+        identify.chordPitchNames(node)
+    )
+    for neighbor, edge in neighbors.items():
+        string = string + ' {} ({}),'.format(
+            chordSymbolFigureFromChord(neighbor),
+            identify.chordPitchNames(neighbor)
         )
     print(string[:-1])

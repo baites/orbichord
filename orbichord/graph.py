@@ -60,7 +60,7 @@ def createGraph(
                     target,
                     distance = distance
                 )
-    return graph
+    return graph, node_to_chord
 
 
 def convertGraphToData(

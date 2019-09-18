@@ -19,7 +19,8 @@ class IdentifiedChord(Chord):
     """
 
     def __init__(self,
-        identify : Callable[[Chord], str],
+        identify : Callable[[Chord], str] = \
+            lambda chord: chord.orderedPitchClassesString,
         notes=None,
         **keywords
     ):
@@ -27,7 +28,7 @@ class IdentifiedChord(Chord):
 
         Parameters
         ----------
-            identify : Callable[Chord, str]
+            identify : Callable[[Chord], str], optional
                 Funtion to indentify chords.
             notes
                 Argument pass to chord constructor.

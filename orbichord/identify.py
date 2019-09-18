@@ -56,7 +56,7 @@ def chordSymbolFigureWithPitchName(chord):
         str
             A string with the pitch names in order.
     """
-    return ' {} ({})'.format(
+    return '{} ({})'.format(
         chordSymbolFigureFromChord(chord),
         chordPitchNames(chord)
     )

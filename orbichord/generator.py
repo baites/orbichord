@@ -2,8 +2,9 @@
 
 import copy
 from itertools import combinations_with_replacement
-from typing import Callable, Iterable, Iterator
 from music21.chord import Chord
+from typing import Callable, Iterable, Iterator
+import orbichord.identify as identify
 
 
 class IdentifiedChord(Chord):
@@ -48,8 +49,13 @@ class IdentifiedChord(Chord):
 
     @property
     def identify(self):
-        """Return identity string."""
+        """Return identify function."""
         return self._identify
+
+    @property
+    def identity(self):
+        """Return identity string."""
+        return self._identify(self)
 
 
 class Generator:
@@ -87,7 +93,7 @@ class Generator:
         combinator: Callable[[Iterable, int], Iterator] =\
             combinations_with_replacement,
         identify: Callable[[Chord], str] = \
-            lambda chord: chord.orderedPitchClassesString,
+            identify.chordSymbolFigureNoInversion,
         select: Callable[[Chord], bool] = \
             lambda chord: chord.isTriad()
     ):

@@ -1,5 +1,6 @@
 
-from music21.harmony import chordSymbolFigureFromChord
+
+
 from music21.scale import MajorScale
 from numpy import inf
 from numpy import linalg as la
@@ -10,10 +11,7 @@ from orbichord.generator import Generator
 scale = MajorScale('C')
 
 chord_generator = Generator(
-    dimension=3,
-    pitches=scale.getPitches('C','B'),
-    identify=lambda chord: chord.orderedPitchClassesString,
-    select=lambda chord: chord.isTriad()
+    pitches=scale.getPitches('C','B')
 )
 
 max_norm_vl = EfficientVoiceLeading(
@@ -28,11 +26,9 @@ graph = createGraph(
 )
 
 for node, neighbors in graph.adjacency():
-    node.inversion(0)
-    string =chordSymbolFigureFromChord(node) + ': '
+    string = node + ': '
     for neighbor, edge in neighbors.items():
-        neighbor.inversion(0)
         string = string + ' {} ({}),'.format(
-            chordSymbolFigureFromChord(neighbor), edge['distance']
+            neighbor, edge['distance']
         )
     print(string[:-1])

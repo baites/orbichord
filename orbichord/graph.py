@@ -29,10 +29,14 @@ def createGraph(
     """
     # Adjacency list
     graph = Graph()
-    # Add the chords as nodes in graph
-    graph.add_nodes_from(
-        generator.run()
-    )
+    # Chord to id map
+    node_to_chord = {}
+    # Add node to the graph usign
+    # chord identity
+    for chord in generator.run():
+        node = chord.identity
+        node_to_chord[node] = chord
+        graph.add_node(node)
     # Compute edges
     vetoed_nodes = set()
     # Loop over all source nodes
@@ -45,7 +49,10 @@ def createGraph(
             if target in vetoed_nodes:
                 continue
             # Compute distance of efficient leading voice
-            _, distance = voice_leading(source, target)
+            _, distance = voice_leading(
+                node_to_chord[source],
+                node_to_chord[target]
+            )
             # If within tolerance add edge
             if tolerance(distance):
                 graph.add_edge(
@@ -57,18 +64,14 @@ def createGraph(
 
 
 def convertGraphToData(
-    graph: tuple,
-    label: Callable[[Chord], str] = None,
-    identify: Callable[[Chord], str] = None
+    graph: Graph
 ):
     """Convert a chrod graph to columnal dataset.
 
     Parameters
     ----------
-        graph : tuple
-            A tuple containing graph nodes, adjacencies, and weights.
-        label : Callable[[Chord], str]
-            Function to name chords.
+        graph : Graph
+            A graph of chords.
 
     Return
     ------
@@ -77,23 +80,24 @@ def convertGraphToData(
         vertices : list
             List of vertices
     """
-    nodes, adjacencies, weights = graph
-
     vertices= []
     edges = []
 
-    for source in range(len(nodes)):
-        node = nodes[source]
+    index = 0
+    node_to_index = {}
+    for node, neighbors in graph.adjacency():
         vertices.append({
-            'name': label(node),
+            'name': node,
             'group': 1
         })
-        for tindex in range(len(adjacencies[source])):
-            target = adjacencies[source][tindex]
-            value = weights[source][tindex]
+        node_to_index[node] = index
+        index += 1
+
+    for node, neighbors in graph.adjacency():
+        for neighbor, edge in neighbors.items():
             edges.append({
-                'source': source,
-                'target': target,
-                'value': value
+                'source': node_to_index[node],
+                'target': node_to_index[neighbor],
+                'value': edge['distance']
             })
     return edges, vertices

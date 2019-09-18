@@ -1,5 +1,4 @@
 import itertools
-from music21.harmony import chordSymbolFigureFromChord
 from music21.scale import MajorScale
 from networkx import connected_components
 from numpy import inf
@@ -17,7 +16,7 @@ scale = MajorScale('C')
 chord_generator = Generator(
     pitches = scale.getPitches('C','B'),
     combinator = combinator,
-    identify = identify.chordPitchNames,
+    identify = identify.chordSymbolFigureWithPitchName,
     select = lambda chord: chord.isTriad()
 )
 
@@ -33,14 +32,10 @@ graph = createGraph(
 )
 
 for node, neighbors in graph.adjacency():
-    string = ' {} ({}): '.format(
-        chordSymbolFigureFromChord(node),
-        identify.chordPitchNames(node)
-    )
+    string = node + ': '
     for neighbor, edge in neighbors.items():
         string = string + ' {} ({}),'.format(
-            chordSymbolFigureFromChord(neighbor),
-            identify.chordPitchNames(neighbor)
+            neighbor, edge['distance']
         )
     print(string[:-1])
 
@@ -50,13 +45,9 @@ print()
 print('Evil twin graph component')
 
 for node, neighbors in evil_twin.adjacency():
-    string = ' {} ({}): '.format(
-        chordSymbolFigureFromChord(node),
-        identify.chordPitchNames(node)
-    )
+    string = node + ': '
     for neighbor, edge in neighbors.items():
         string = string + ' {} ({}),'.format(
-            chordSymbolFigureFromChord(neighbor),
-            identify.chordPitchNames(neighbor)
+            neighbor, edge['distance']
         )
     print(string[:-1])

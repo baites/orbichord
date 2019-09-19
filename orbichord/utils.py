@@ -1,8 +1,11 @@
 
 from IPython.core.display import display, HTML, Javascript
-from IPython.display import Image
+from IPython.display import Image, Audio
 import json
+from midi2audio import FluidSynth
+import os
 import random
+import uuid
 
 
 def showMusicXML(xml):
@@ -30,7 +33,6 @@ def showMusicXML(xml):
             window.define = undefined // now the loaded script will ignore requirejs
             var s = document.createElement( 'script' );
             s.setAttribute( 'src', "https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@0.7.1/build/opensheetmusicdisplay.min.js" );
-            //s.setAttribute( 'src', "/custom/opensheetmusicdisplay.js" );
             s.onload=function(){
                 window.define = _define
                 console.log("loaded OSMD for the first time",opensheetmusicdisplay)
@@ -58,15 +60,25 @@ def showMusicXML(xml):
     return DIV_ID
 
 
-def renderWithJS(score):
+def renderWithJS(stream):
     """Show a using javascript.
 
     Reference:
         https://notebooks.azure.com/OUsefulInfo/projects/gettingstarted/html/4.1.0%20Music%20Notation.ipynb
     """
-    xml = open(score.write('musicxml')).read()
+    xml = open(stream.write('musicxml')).read()
     showMusicXML(xml)
 
 
-def renderWithLily(score):
-    return Image(filename=str(score.write('lily.png')))
+def renderWithLily(stream):
+    return Image(filename=str(stream.write('lily.png')))
+
+
+def playAudio(stream):
+    midi = stream.write('midi')
+    fs = FluidSynth('/usr/share/soundfonts/FluidR3_GM.sf2')
+    filename = 'audio-{}.wav'.format(uuid.uuid4().hex)
+    fs.midi_to_audio(midi, filename)
+    audio = Audio(filename=filename)
+    os.remove(filename)
+    return audio

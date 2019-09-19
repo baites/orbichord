@@ -1,4 +1,5 @@
 matplotlib
+midi2audio
 music21
 networkx
 numpy

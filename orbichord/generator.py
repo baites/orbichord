@@ -94,7 +94,7 @@ class Generator:
         combinator: Callable[[Iterable, int], Iterator] =\
             combinations_with_replacement,
         identify: Callable[[Chord], str] = \
-            identify.chordSymbolFigureNoInversion,
+            lambda chord: chord.orderedPitchClassesString,
         select: Callable[[Chord], bool] = \
             lambda chord: chord.isTriad()
     ):

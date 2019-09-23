@@ -11,7 +11,9 @@ from typing import Callable
 def createGraph(
     generator: Generator,
     voice_leading: EfficientVoiceLeading,
-    tolerance: Callable[[float], bool]
+    tolerance: Callable[[float], bool],
+    label: Callable[[Chord], str] =\
+        lambda chord: chord.identity
 ) -> Graph:
     """Create a graph as adjacency list of chords.
 
@@ -23,6 +25,7 @@ def createGraph(
             A voice leading object.
         tolerance : Callable[[float], bool]
             Tolerance function.
+        labed
     Return:
         graph: Graph
             Networkx Graph object.
@@ -34,7 +37,7 @@ def createGraph(
     # Add node to the graph usign
     # chord identity
     for chord in generator.run():
-        node = chord.identity
+        node = label(chord)
         node_to_chord[node] = chord
         graph.add_node(node)
     # Compute edges

@@ -1,12 +1,11 @@
+"""Example of voice leading between scales."""
 
 from music21.chord import Chord
+from music21.pitch import Pitch
 from music21.scale import MinorScale, MajorScale, ChromaticScale
 from numpy import inf
 from numpy import linalg as la
-from orbichord.chordinate import EfficientVoiceLeading
-
-
-from music21.pitch import Pitch
+from orbichord.chordinate import EfficientVoiceLeading, interscalarMatrix
 
 D_minor_scale = MinorScale('D')
 E_major_scale = MajorScale('E')
@@ -36,4 +35,22 @@ vl, dist = voice_leading(
 print(
     'voice leading = {}, distance = {}'.format(vl, dist)
 )
+# voice leading = [1, 1, 0, 1, 1, 0, 1], distance = 1.0
+
+# All possible voice leadings
+print()
+print('all possible voice leadings:')
+matrix = interscalarMatrix(D_minor_scale, E_major_scale, ChromaticScale('C'))
+for vl in matrix:
+    print(
+        'voice leading = {}, distance = {}'.format(vl, la.norm(vl, inf))
+    )
+
+# all possible voice leadings:
+# voice leading = [1, 1, 0, 1, 1, 0, 1], distance = 1.0
+# voice leading = [3, 2, 2, 3, 2, 2, 3], distance = 3.0
+# voice leading = [4, 4, 4, 4, 4, 4, 5], distance = 5.0
+# voice leading = [6, 6, 5, 6, 6, 6, 6], distance = 6.0
+# voice leading = [-4, -5, -5, -4, -4, -5, -4], distance = 5.0
+# voice leading = [-3, -3, -3, -2, -3, -3, -2], distance = 3.0
 # voice leading = [-1, -1, -1, -1, -1, -1, -1], distance = 1.0

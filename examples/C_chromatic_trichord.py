@@ -6,6 +6,7 @@ by their ordered pitch class string that are also triads.
 """
 
 from orbichord.generator import Generator
+from orbichord.identify import chordSymbolFigureNoInversion
 from music21.scale import ChromaticScale
 
 scale = ChromaticScale()
@@ -16,8 +17,9 @@ chord_generator = Generator(
 )
 
 for chord in chord_generator.run():
-    print(
+    print('{} {} {} ({})'.format(
         chord,
         chord.orderedPitchClassesString,
-        chord.pitchedCommonName
-    )
+        chord.pitchedCommonName,
+        chordSymbolFigureNoInversion(chord)
+    ))

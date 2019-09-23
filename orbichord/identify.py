@@ -1,5 +1,6 @@
 """Define a set of common chord identyfier."""
 
+from copy import deepcopy
 from music21.chord import Chord
 from music21.harmony import chordSymbolFigureFromChord
 
@@ -19,8 +20,9 @@ def chordSymbolFigureNoInversion(chord : Chord) -> str:
         str
             A string with with the chord symbol.
     """
-    chord.inversion(0)
-    return chordSymbolFigureFromChord(chord)
+    temp = deepcopy(chord)
+    temp.inversion(0)
+    return chordSymbolFigureFromChord(temp)
 
 
 def chordPitchNames(chord : Chord) -> str:

@@ -7,6 +7,7 @@ from numpy import linalg as la
 from orbichord.chordinate import EfficientVoiceLeading
 from orbichord.graph import createGraph, convertGraphToData
 from orbichord.generator import Generator
+from orbichord.identify import chordSymbolFigureNoInversion
 
 scale = MajorScale('C')
 
@@ -22,7 +23,8 @@ max_norm_vl = EfficientVoiceLeading(
 graph, _ = createGraph(
     generator = chord_generator,
     voice_leading = max_norm_vl,
-    tolerance = lambda x: x <= 1.0
+    tolerance = lambda x: x <= 1.0,
+    label = chordSymbolFigureNoInversion
 )
 
 for node, neighbors in graph.adjacency():

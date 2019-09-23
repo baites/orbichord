@@ -1,3 +1,5 @@
+"""Example of chord graph creation."""
+
 import itertools
 from music21.scale import MajorScale
 from networkx import connected_components
@@ -6,7 +8,7 @@ from numpy import linalg as la
 from orbichord.chordinate import VoiceLeading
 from orbichord.graph import createGraph, convertGraphToData
 from orbichord.generator import Generator
-import orbichord.identify as identify
+from orbichord.identify import chordPitchNames, chordSymbolFigureWithPitchName
 
 def combinator(iterable, dimension):
     return itertools.product(iterable, repeat = dimension)
@@ -16,7 +18,7 @@ scale = MajorScale('C')
 chord_generator = Generator(
     pitches = scale.getPitches('C','B'),
     combinator = combinator,
-    identify = identify.chordSymbolFigureWithPitchName,
+    identify = chordPitchNames,
     select = lambda chord: chord.isTriad()
 )
 
@@ -28,7 +30,8 @@ max_norm_vl = VoiceLeading(
 graph, _ = createGraph(
     generator = chord_generator,
     voice_leading = max_norm_vl,
-    tolerance = lambda x: x <= 1.0
+    tolerance = lambda x: x <= 1.0,
+    label = chordSymbolFigureWithPitchName
 )
 
 for node, neighbors in graph.adjacency():

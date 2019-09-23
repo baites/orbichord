@@ -6,6 +6,7 @@ their ordered pitch class string that contain a triad.
 """
 
 from orbichord.generator import Generator
+from orbichord.identify import chordSymbolFigureNoInversion
 from music21.scale import MajorScale
 
 scale = MajorScale('C')
@@ -17,8 +18,9 @@ chord_generator = Generator(
 )
 
 for chord in chord_generator.run():
-    print(
+    print('{} {} {} ({})'.format(
         chord,
         chord.orderedPitchClassesString,
-        chord.pitchedCommonName
-    )
+        chord.pitchedCommonName,
+        chordSymbolFigureNoInversion(chord)
+    ))

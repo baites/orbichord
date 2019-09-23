@@ -1,3 +1,4 @@
+"""Example of interscalar matrix between chords."""
 
 from music21.chord import Chord
 from music21.scale import MajorScale, ChromaticScale

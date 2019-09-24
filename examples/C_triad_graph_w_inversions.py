@@ -18,8 +18,7 @@ scale = MajorScale('C')
 chord_generator = Generator(
     pitches = scale.getPitches('C','B'),
     combinator = combinator,
-    identify = chordPitchNames,
-    select = lambda chord: chord.isTriad()
+    identify = chordPitchNames
 )
 
 max_norm_vl = VoiceLeading(

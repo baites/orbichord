@@ -1,5 +1,4 @@
-
-
+"""Example of chord graph creation."""
 
 from music21.scale import MajorScale
 from numpy import inf

@@ -38,6 +38,46 @@ def scalarPoint(
     return point
 
 
+def standardSimplex(
+    chord: Chord,
+    scale: ConcreteScale
+) -> list:
+    """Provide chord scalar point in the standard simplex
+
+    Parameters
+    ----------
+        chrod : Chrod
+            Chord to estimate normal order
+        scale : ConcreteScale
+            Scale use as metric step
+    Return
+    ------
+        list
+            List with scalar point within standard simplex
+    """
+    # Get scale max degree and compute scalar point
+    max_scale_degree = scale.getDegreeMaxUnique()
+    point = scalarPoint(chord, scale)
+    # Reduce to the standard simplex
+    dimension = len(point)
+    sumchord = sum(point)
+    point.sort()
+    while sumchord >= max_scale_degree:
+        last = point[-1]
+        for index in range(1, dimension):
+            point[dimension-index] = point[dimension-index-1]
+        point[0] = last - max_scale_degree
+        sumchord = sum(point)
+    # Apply affine transformation
+    previous = point[0]
+    for index in range(1, dimension):
+        interval = (point[index] - previous)/max_scale_degree
+        previous = point[index]
+        point[index] = interval
+    point[0] = sumchord/max_scale_degree
+    return point
+
+
 def mod(x, y, d):
     """Implement a modify module to provide
     shortest possible voice leading.

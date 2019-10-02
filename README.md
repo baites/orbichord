@@ -48,7 +48,7 @@ jupyter kernelspec remove myenv
 ```bash
 $ workon orbichord
 (orbichord)$ pip install "holoviews[recommended]"
-(orbichord)$ pip install networkx
+(orbichord)$ pip install plotly
 ```
 
 * Start jupyter lab

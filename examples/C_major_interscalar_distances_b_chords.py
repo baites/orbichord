@@ -5,6 +5,6 @@ from orbichord.chordinate import interscalarVector
 
 scale = MajorScale('C')
 chordA = Chord('C E G')
-chordB = Chord('F B D ')
+chordB = Chord('F B D')
 delta = interscalarVector(chordA, chordB, scale)
 print(delta)

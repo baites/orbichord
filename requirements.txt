@@ -4,4 +4,5 @@ music21
 networkx
 numpy
 pbr
+pytest
 tox

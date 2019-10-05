@@ -7,5 +7,4 @@ scale = MajorScale('C')
 chordA = Chord('C E G')
 chordB = Chord('F B D')
 matrix = interscalarMatrix(chordA, chordB, scale)
-
 print(matrix)

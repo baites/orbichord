@@ -1,15 +1,14 @@
-"""Standard chord figures."""
+"""Map postonal chord names to symbols commonly found on lead sheets."""
 
-from orbichord.chord import IdentifiedChord
+from music21.chord import Chord
 from orbichord.generator import IdentifiedChord
-from orbichord.maps import ORDERED_PITCH_CLASS_TO_FIGURE
+from orbichord.maps import ORDERED_PITCH_CLASSES_TO_FIGURE
 
 
-def hasFigure(chord : IdentifiedChord) -> bool:
-    """Return true if the chird has figure.
+def hasChordSymbolFigure(chord : Chord) -> bool:
+    """Return true if the chord has figure.
 
-    This only applies to standard chords traditionally from
-    occidental harmony theory.
+    This only applies to chords commonly found on lead sheets.
 
     Parameters
     ----------
@@ -20,14 +19,13 @@ def hasFigure(chord : IdentifiedChord) -> bool:
         bool:
             A string with with the chord symbol.
     """
-    return chord.identity in ORDERED_PITCH_CLASS_TO_FIGURE
+    return chord.orderedPitchClassesString in ORDERED_PITCH_CLASSES_TO_FIGURE
 
 
-def chordFigure(chord : IdentifiedChord) -> str:
+def chordSymbolFigure(chord : Chord) -> str:
     """Identify chords based chord symbol figure.
 
-    This only applies to standard chords traditionally from
-    occidental harmony theory.
+    This only applies to chords commonly found on lead sheets.
 
     Parameters
     ----------
@@ -38,4 +36,5 @@ def chordFigure(chord : IdentifiedChord) -> str:
         str
             A string with with the chord symbol.
     """
-    return ORDERED_PITCH_CLASS_TO_FIGURE[chord.identity]
+    key = chord.orderedPitchClassesString
+    return ORDERED_PITCH_CLASSES_TO_FIGURE[key]

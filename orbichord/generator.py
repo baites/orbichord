@@ -6,7 +6,7 @@ from music21.chord import Chord
 from typing import Callable, Iterable, Iterator
 from orbichord.chord import IdentifiedChord
 import orbichord.identify as identify
-from orbichord.symbol import hasFigure
+from orbichord.symbol import hasChordSymbolFigure
 
 
 class Generator:
@@ -45,7 +45,7 @@ class Generator:
             combinations_with_replacement,
         identify: Callable[[Chord], str] = \
             lambda chord: chord.orderedPitchClassesString,
-        select: Callable[[Chord], bool] = hasFigure
+        select: Callable[[Chord], bool] = hasChordSymbolFigure
     ):
         """Initialize the generator (Constructor).
 

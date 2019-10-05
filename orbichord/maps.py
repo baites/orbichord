@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-ORDERED_PITCH_CLASS_TO_FIGURE = OrderedDict([
+ORDERED_PITCH_CLASSES_TO_FIGURE = OrderedDict([
                 ('<047>', 'C'),
                 ('<037>', 'Cm'),
                 ('<048>', 'C+'),

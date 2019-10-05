@@ -4,59 +4,9 @@ import copy
 from itertools import combinations_with_replacement
 from music21.chord import Chord
 from typing import Callable, Iterable, Iterator
+from orbichord.chord import IdentifiedChord
 import orbichord.identify as identify
-
-
-class IdentifiedChord(Chord):
-    """Extend Chord to be a hashable object.
-
-    The hash is contructed from a indentity function that
-    map a chord in to a string.
-
-    Attributes
-    ----------
-    indentify
-    """
-
-    def __init__(self,
-        identify : Callable[[Chord], str] = \
-            lambda chord: chord.orderedPitchClassesString,
-        notes=None,
-        **keywords
-    ):
-        """Initialize a hashable chord.
-
-        Parameters
-        ----------
-            identify : Callable[[Chord], str], optional
-                Funtion to indentify chords.
-            notes
-                Argument pass to chord constructor.
-            keywords
-                Argument pass to chord constructor.
-        """
-        super().__init__(notes, **keywords)
-        self._identify = identify
-
-    def __hash__(self):
-        """Return a has of the string."""
-        return hash(self._identify(self))
-
-    def __eq__(self, other):
-        """Overload comparison based hashable implementation."""
-        if not isinstance(other, IdentifiedChord):
-            return False
-        return hash(self) == hash(other)
-
-    @property
-    def identify(self):
-        """Return identify function."""
-        return self._identify
-
-    @property
-    def identity(self):
-        """Return identity string."""
-        return self._identify(self)
+from orbichord.symbol import hasFigure
 
 
 class Generator:
@@ -95,8 +45,7 @@ class Generator:
             combinations_with_replacement,
         identify: Callable[[Chord], str] = \
             lambda chord: chord.orderedPitchClassesString,
-        select: Callable[[Chord], bool] = \
-            lambda chord: chord.isTriad()
+        select: Callable[[Chord], bool] = hasFigure
     ):
         """Initialize the generator (Constructor).
 

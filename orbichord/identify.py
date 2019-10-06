@@ -2,7 +2,6 @@
 
 from copy import deepcopy
 from music21.chord import Chord
-from orbichord.symbol import chordSymbolFigure
 
 
 def chordPitchClasses(chord : Chord) -> str:
@@ -18,8 +17,18 @@ def chordPitchClasses(chord : Chord) -> str:
             A string with the pitch classes.
     """
     string = '<'
+    veto = set()
     for pitch in chord.pitches:
-        string += pitch.pitchClass
+        pc = pitch.pitchClass
+        if pc in veto:
+            continue
+        if pc == 10:
+            string += 'A'
+        elif pc == 11:
+            string += 'B'
+        else:
+            string += str(pitch.pitchClass)
+        veto.add(pc)
     string += '>'
     return string
 

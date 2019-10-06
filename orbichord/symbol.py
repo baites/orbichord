@@ -1,8 +1,8 @@
 """Map postonal chord names to symbols commonly found on lead sheets."""
 
 from music21.chord import Chord
-from orbichord.generator import IdentifiedChord
-from orbichord.maps import ORDERED_PITCH_CLASSES_TO_FIGURE
+from orbichord.identify import chordPitchClasses
+from orbichord.maps import PITCH_CLASSES_TO_SYMBOL
 
 
 def hasChordSymbolFigure(chord : Chord) -> bool:
@@ -19,7 +19,8 @@ def hasChordSymbolFigure(chord : Chord) -> bool:
         bool:
             A string with with the chord symbol.
     """
-    return chord.orderedPitchClassesString in ORDERED_PITCH_CLASSES_TO_FIGURE
+    key = chordPitchClasses(chord)
+    return key in PITCH_CLASSES_TO_SYMBOL
 
 
 def chordSymbolFigure(chord : Chord) -> str:
@@ -36,5 +37,5 @@ def chordSymbolFigure(chord : Chord) -> str:
         str
             A string with with the chord symbol.
     """
-    key = chord.orderedPitchClassesString
-    return ORDERED_PITCH_CLASSES_TO_FIGURE[key]
+    key = chordPitchClasses(chord)
+    return PITCH_CLASSES_TO_SYMBOL[key]

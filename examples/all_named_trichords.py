@@ -13,10 +13,13 @@ from music21.scale import ChromaticScale
 scale = ChromaticScale('C')
 
 chord_generator = Generator(
-    pitches=scale.getPitches('C','B')
+    pitches = scale.getPitches('C','B')
 )
 
 for chord in chord_generator.run():
+    print(chord)
+    chord.inversion(0)
+    print(chord)
     print('{} {} - {}'.format(
         chord,
         chord.orderedPitchClassesString,

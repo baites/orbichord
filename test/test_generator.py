@@ -37,6 +37,7 @@ def test_triad_Generator():
     ))
     generated_chords = set()
     for chord in chord_generator.run():
+        chord.inversion(0)
         generated_chords.add(
             chordSymbolFigure(chord)
         )

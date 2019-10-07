@@ -17,10 +17,8 @@ chord_generator = Generator(
 )
 
 for chord in chord_generator.run():
-    chord.inversion(0)
-    print('{} {} {} ({})'.format(
+    print('{} {} - {}'.format(
         chord,
         chord.orderedPitchClassesString,
-        chord.pitchedCommonName,
-        chordSymbolFigure(chord)
+        chordSymbolFigure(chord, inversion=0)
     ))

@@ -14,10 +14,12 @@ scale = MajorScale('C')
 chord_generator = Generator(
     pitches = scale.getPitches('C','B'),
     dimension = 4,
-    select = lambda chord: chord.containsTriad()
+    select = lambda chord: hasChordSymbolFigure(chord) and\
+                    chord.containsTriad()
 )
 
 for chord in chord_generator.run():
+    chord.inversion(0)
     print('{} {} ({})'.format(
         chord,
         chord.orderedPitchClassesString,

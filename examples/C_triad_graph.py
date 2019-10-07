@@ -22,7 +22,7 @@ max_norm_vl = EfficientVoiceLeading(
 graph, _ = createGraph(
     generator = chord_generator,
     voice_leading = max_norm_vl,
-    tolerance = lambda x: x <= 1.0,
+    tolerance = lambda x: x == 1.0,
     label = chordSymbolFigureNoInversion
 )
 

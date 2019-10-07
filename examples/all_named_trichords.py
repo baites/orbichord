@@ -10,18 +10,21 @@ from orbichord.generator import Generator
 from orbichord.symbol import chordSymbolFigure
 from music21.scale import ChromaticScale
 
+def combinator(iterable, dimension):
+    return itertools.product(iterable, repeat = dimension)
+
 scale = ChromaticScale('C')
 
 chord_generator = Generator(
+    combinator = combinator,
     pitches = scale.getPitches('C','B')
 )
 
 for chord in chord_generator.run():
-    print(chord)
-    chord.inversion(0)
-    print(chord)
     print('{} {} - {}'.format(
         chord,
         chord.orderedPitchClassesString,
         chordSymbolFigure(chord)
-    ))
+    ),
+        chord.pitchClasses
+    )

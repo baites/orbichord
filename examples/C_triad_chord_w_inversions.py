@@ -7,8 +7,8 @@ their ordered pitch class string that are also triads.
 
 import itertools
 from orbichord.generator import Generator
-from orbichord.identify import chordPitchNames
-from music21.harmony import chordSymbolFigureFromChord
+from orbichord.identify import chordSymbolIndex
+from orbichord.symbol import chordSymbolFigure
 from music21.scale import MajorScale
 
 def combinator(iterable, dimension):
@@ -19,14 +19,13 @@ scale = MajorScale('C')
 chord_generator = Generator(
     pitches = scale.getPitches('C','B'),
     combinator = combinator,
-    identify = chordPitchNames,
+    identify = chordSymbolIndex,
     select = lambda chord: chord.isTriad()
 )
 
 for chord in chord_generator.run():
-    print('{} {} {} ({})'.format(
+    print('{} {} - {}'.format(
         chord,
         chord.orderedPitchClassesString,
-        chord.pitchedCommonName,
-        chordSymbolFigureFromChord(chord)
+        chordSymbolFigure(chord)
     ))

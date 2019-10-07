@@ -5,7 +5,6 @@ from itertools import combinations_with_replacement
 from music21.chord import Chord
 from typing import Callable, Iterable, Iterator
 from orbichord.chord import IdentifiedChord
-import orbichord.identify as identify
 from orbichord.symbol import hasChordSymbolFigure
 
 

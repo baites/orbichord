@@ -10,13 +10,12 @@ from orbichord.generator import Generator
 from orbichord.symbol import chordSymbolFigure
 from music21.scale import ChromaticScale
 
-def combinator(iterable, dimension):
-    return itertools.product(iterable, repeat = dimension)
+from orbichord.identify import chordSymbolIndex
 
 scale = ChromaticScale('C')
 
 chord_generator = Generator(
-    combinator = combinator,
+    dimension = 4,
     pitches = scale.getPitches('C','B')
 )
 

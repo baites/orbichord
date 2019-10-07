@@ -5,7 +5,7 @@ from music21.scale import MajorScale
 from networkx import connected_components
 from numpy import inf
 from numpy import linalg as la
-from orbichord.chordinate import VoiceLeading
+from orbichord.chordinate import EfficientVoiceLeading, Permutation
 from orbichord.graph import createGraph, convertGraphToData
 from orbichord.generator import Generator
 from orbichord.identify import chordPitchNames
@@ -24,9 +24,10 @@ chord_generator = Generator(
     select = lambda chord: chord.isTriad()
 )
 
-max_norm_vl = VoiceLeading(
+max_norm_vl = EfficientVoiceLeading(
     scale = scale,
-    metric = lambda delta: la.norm(delta, inf)
+    metric = lambda delta: la.norm(delta, inf),
+    permutation = Permutation.NONE
 )
 
 graph, _ = createGraph(

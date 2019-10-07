@@ -1,5 +1,6 @@
 """Implement tools to compute chordinates and distances in a given scale."""
 
+from enum import Enum
 import itertools
 import math
 from music21.chord import Chord
@@ -89,62 +90,43 @@ def mod(x, y, d):
     return positive
 
 
-def interscalarVector(
-    chordA: Chord,
-    chordB: Chord,
-    scale: ConcreteScale
-) -> list:
-    """Compute the interscalar distance between two chords
-
-    Parameters
-    ----------
-        chrodA : Chrod
-            Voice leading start chord
-        chrodA : Chrod
-            Voice leading end chord
-        scale : ConcreteScale
-            Scale use a metric
-    Return
-    ------
-        list
-            Voice leading scalar steps
-    """
-    pointA = scalarPoint(chordA, scale)
-    pointB = scalarPoint(chordB, scale)
-    if len(pointA) != len(pointB):
-        raise ValueError('Chords are not of the same dimension!')
-    dimension = len(pointA)
-    max_scale_degree = scale.getDegreeMaxUnique()
-    delta = [0]*dimension
-    for i in range(dimension):
-        delta[i] = mod(pointB[i], pointA[i], max_scale_degree)
-    return delta
+class Permutation(Enum):
+    """Define type permutation used interscalar matrix."""
+    NONE = 1
+    CYCLIC = 2
+    ANY = 3
 
 
 def interscalarMatrix(
     chordA: Chord,
     chordB: Chord,
-    scale: ConcreteScale
+    scale: ConcreteScale,
+    permutation: Permutation = Permutation.ANY
 ) -> list:
     """Compute the interscalar matrix between two chords
 
     Parameters
     ----------
         chrodA : Chrod
-            Voice leading start chord
+            Voice leading start chord.
         chrodA : Chrod
             Voice leading end chord
         scale : ConcreteScale
-            Scale use a metric
+            Scale use a metric.
+        permutation : Permutation, optional
+            Permutation invariance in the interscalar matrix.
+
     Return
     ------
         list
             List of voice leading scalar steps
     """
-    pointA = sorted(scalarPoint(chordA, scale))
-    pointB = sorted(scalarPoint(chordB, scale))
+    pointA = scalarPoint(chordA, scale)
+    pointB = scalarPoint(chordB, scale)
     if len(pointA) != len(pointB):
         raise ValueError('Chords are not of the same dimension!')
+    if permutation == Permutation.ANY:
+        pointA.sort(); pointB.sort()
     dimension = len(pointA)
     voice_leadings = []
     max_scale_degree = scale.getDegreeMaxUnique()
@@ -153,36 +135,41 @@ def interscalarMatrix(
         for i in range(dimension):
             delta[i] = mod(pointB[i], pointA[i], max_scale_degree)
         voice_leadings.append(delta)
+        if permutation == Permutation.NONE:
+            break
         tmp = pointB[0]
         pointB = pointB[1:] + [tmp + max_scale_degree]
     return voice_leadings
 
 
-class VoiceLeading:
+class EfficientVoiceLeading:
     """
     Compute efficient voice leading between two chords.
-
     Attributes
     ----------
     scale
     metric
+    permutation
     """
 
     def __init__(self,
         scale: ConcreteScale,
-        metric: Callable[[list], float]
+        metric: Callable[[list], float],
+        permutation: Permutation = Permutation.ANY
     ):
         """Create a efficient voice leading object
-
         Parameters
         ----------
             scale : ConcreteScale
                 Scale use to define voice leading steps
             metric : Callable[[list], float]
                 Metric function
+            permutation : Permutation, optional
+                Permutation invariance in the voice leading.
         """
         self._scale = scale
         self._metric = metric
+        self._permutation = permutation
 
     @property
     def scale(self):
@@ -194,38 +181,10 @@ class VoiceLeading:
         """Returns voice leaging metric."""
         return self._metric
 
-    def __call__(self,
-        chordA: Chord,
-        chordB: Chord,
-    ) -> tuple:
-        """Return the efficient voice leading and its distance
-
-        Parameters
-        ----------
-            chrodA : Chrod
-                Voice leading start chord
-            chrodA : Chrod
-                Voice leading end chord
-        Return
-        ------
-            tuple
-                Efficient voice leading scalar steps and its distance
-        """
-        delta = interscalarVector(chordA, chordB, self._scale)
-        distance = self._metric(delta)
-        return delta, distance
-
-
-class EfficientVoiceLeading(VoiceLeading):
-    """
-    Compute efficient voice leading between two chords.
-    """
-
-    def __init__(self,
-        scale: ConcreteScale,
-        metric: Callable[[list], float]
-    ):
-        super().__init__(scale, metric)
+    @property
+    def permutation(self):
+        """Returns voice leaging metric."""
+        return self._permutation
 
     def __call__(self,
         chordA: Chord,
@@ -246,7 +205,9 @@ class EfficientVoiceLeading(VoiceLeading):
         """
         voice_leading_distance = None
         voice_leading_index = None
-        matrix = interscalarMatrix(chordA, chordB, self._scale)
+        matrix = interscalarMatrix(
+            chordA, chordB, self._scale, self._permutation
+        )
         for index in range(len(matrix)):
             voice_leading = matrix[index]
             distance = self._metric(voice_leading)

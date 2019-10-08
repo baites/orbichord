@@ -7,8 +7,17 @@ from typing import Callable
 class IdentifiedChord(Chord):
     """Extend Chord to be a hashable object.
 
-    The hash is contructed from a indentity function that
+    The hash is contructed from a identity function that
     map a chord in to a string.
+
+    Parameters
+    ----------
+        identify : Callable[[Chord], str], optional
+            Funtion to indentify chords.
+        notes :
+            Argument pass to chord constructor.
+        keywords :
+            Argument pass to chord constructor.
 
     Attributes
     ----------
@@ -21,17 +30,7 @@ class IdentifiedChord(Chord):
         notes=None,
         **keywords
     ):
-        """Initialize a hashable chord.
-
-        Parameters
-        ----------
-            identify : Callable[[Chord], str], optional
-                Funtion to indentify chords.
-            notes
-                Argument pass to chord constructor.
-            keywords
-                Argument pass to chord constructor.
-        """
+        """Constructor"""
         super().__init__(notes, **keywords)
         self._identify = identify
 

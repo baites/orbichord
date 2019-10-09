@@ -5,14 +5,15 @@ This example generates the space of C chords identify by
 their ordered pitch class string that are also triads.
 """
 
-from orbichord.generator import IdentifiedChord
+from orbichord.chord import IdentifiedChord
+from orbichord.identify import chordPitchNames
+
 
 C = IdentifiedChord(
-    identify = lambda chord: chord.orderedPitchClassesString,
     notes = 'C4 E4 G4'
 )
 
-print(C.pitchedCommonName)
+print(C.orderedPitchClassesString)
 print(C.identify(C))
 print(hash(C))
 

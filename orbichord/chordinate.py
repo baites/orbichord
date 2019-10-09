@@ -145,6 +145,7 @@ def interscalarMatrix(
 class EfficientVoiceLeading:
     """
     Compute efficient voice leading between two chords.
+
     Attributes
     ----------
     scale

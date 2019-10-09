@@ -22,6 +22,21 @@ class IdentifiedChord(Chord):
     Attributes
     ----------
     indentify
+
+    Examples
+    --------
+
+    >>> from orbichord.chord import IdentifiedChord
+    >>> C = IdentifiedChord(notes = 'C4 E4 G4')
+    >>> print(C.orderedPitchClassesString)
+    <047>
+    >>> print(C.identity)
+    <047>
+    >>> print(C.identify(C))
+    <047>
+    >>> print(hash(C))
+    5261361699489349224
+    
     """
 
     def __init__(self,

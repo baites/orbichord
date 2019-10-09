@@ -19,10 +19,6 @@ class IdentifiedChord(Chord):
         keywords :
             Argument pass to chord constructor.
 
-    Attributes
-    ----------
-    indentify
-
     Examples
     --------
 
@@ -36,7 +32,6 @@ class IdentifiedChord(Chord):
     <047>
     >>> print(hash(C))
     5261361699489349224
-    
     """
 
     def __init__(self,

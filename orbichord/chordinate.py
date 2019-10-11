@@ -10,11 +10,11 @@ from numpy import array
 from typing import Callable
 
 
-def scalarPoint(
+def scalePoint(
     chord: Chord,
     scale: ConcreteScale
 ) -> list:
-    """Provide chord scalar point using a given scale steps
+    """Compute chord coordinates using the degree for a given scale
 
     Parameters
     ----------
@@ -22,10 +22,21 @@ def scalarPoint(
             Chord to estimate normal order
         scale : ConcreteScale
             Scale use as metric step
+
     Return
     ------
         list
             List with scalar normal order
+
+    Examples
+    --------
+    >>> from music21.chord import Chord
+    >>> from music21.scale import MajorScale
+    >>> from orbichord.chordinate import scalePoint
+    >>> scale = MajorScale('C')
+    >>> chord = Chord('C E G')
+    >>> scalePoint(chord, scale)
+    [0, 2, 4]
     """
     # Chordinates
     point = []
@@ -41,9 +52,10 @@ def scalarPoint(
 
 def standardSimplex(
     chord: Chord,
-    scale: ConcreteScale
+    scale: ConcreteScale,
+    normalize: bool = True
 ) -> list:
-    """Provide chord scalar point in the standard simplex
+    """Compute chord scale point in the standard simplex
 
     Parameters
     ----------
@@ -51,14 +63,29 @@ def standardSimplex(
             Chord to estimate normal order
         scale : ConcreteScale
             Scale use as metric step
+        normalize : int, optional
+            Normalize coordinates by the number of scale degrees
+
     Return
     ------
         list
             List with scalar point within standard simplex
+
+    Examples
+    --------
+    >>> from music21.chord import Chord
+    >>> from music21.scale import ChromaticScale
+    >>> from orbichord.chordinate import standardSimplex
+    >>> scale = ChromaticScale('C')
+    >>> chord = Chord('C E G')
+    >>> standardSimplex(chord, scale)
+    [0.9166666666666666, 0.3333333333333333, 0.25]
+    >>> standardSimplex(chord, scale, normalize=False)
+    [11, 4, 3]
     """
     # Get scale max degree and compute scalar point
     max_scale_degree = scale.getDegreeMaxUnique()
-    point = scalarPoint(chord, scale)
+    point = scalePoint(chord, scale)
     # Reduce to the standard simplex
     dimension = len(point)
     sumchord = sum(point)
@@ -72,10 +99,13 @@ def standardSimplex(
     # Apply affine transformation
     previous = point[0]
     for index in range(1, dimension):
-        interval = (point[index] - previous)/max_scale_degree
+        interval = point[index] - previous
         previous = point[index]
         point[index] = interval
-    point[0] = sumchord/max_scale_degree
+    point[0] = sumchord
+    if normalize:
+        for index in range(len(point)):
+            point[index] /= max_scale_degree
     return point
 
 
@@ -120,9 +150,23 @@ def interscalarMatrix(
     ------
         list
             List of voice leading scalar steps
+
+    Examples
+    --------
+    >>> from music21.chord import Chord
+    >>> from music21.scale import MajorScale
+    >>> from orbichord.chordinate import interscalarMatrix, Permutation
+    >>> scale = MajorScale('C')
+    >>> chordA = Chord('C E G')
+    >>> chordB = Chord('A C E')
+    >>> matrix = interscalarMatrix(
+    ...     chordA, chordB, scale
+    >>> )
+    >>> print(matrix)
+    [[0, 0, 1], [2, 3, 3], [-2, -2, -2]]
     """
-    pointA = scalarPoint(chordA, scale)
-    pointB = scalarPoint(chordB, scale)
+    pointA = scalePoint(chordA, scale)
+    pointB = scalePoint(chordB, scale)
     if len(pointA) != len(pointB):
         raise ValueError('Chords are not of the same dimension!')
     if permutation == Permutation.ANY:
@@ -146,11 +190,32 @@ class EfficientVoiceLeading:
     """
     Compute efficient voice leading between two chords.
 
-    Attributes
+    Parameters
     ----------
-    scale
-    metric
-    permutation
+        scale : ConcreteScale
+            Scale use to define voice leading steps
+        metric : Callable[[list], float]
+            Metric function
+        permutation : Permutation, optional
+            Permutation invariance in the voice leading.
+
+    Examples
+    --------
+    >>> from music21.chord import Chord
+    >>> from music21.scale import MajorScale
+    >>> from numpy import inf
+    >>> from numpy import linalg as la
+    >>> from orbichord.chordinate import EfficientVoiceLeading
+    >>> scale = MajorScale('C')
+    >>> C = Chord('C E G')
+    >>> G = Chord('G B D')
+    >>> voice_leading = EfficientVoiceLeading(
+    ...     scale = scale,
+    ...     metric = lambda delta: la.norm(delta, inf)
+    >>> )
+    >>> vl, dist = voice_leading(C, G)
+    >>> print(vl, dist)
+    [-1, -1, 0] 1.0
     """
 
     def __init__(self,
@@ -158,16 +223,7 @@ class EfficientVoiceLeading:
         metric: Callable[[list], float],
         permutation: Permutation = Permutation.ANY
     ):
-        """Create a efficient voice leading object
-        Parameters
-        ----------
-            scale : ConcreteScale
-                Scale use to define voice leading steps
-            metric : Callable[[list], float]
-                Metric function
-            permutation : Permutation, optional
-                Permutation invariance in the voice leading.
-        """
+        """Constructor."""
         self._scale = scale
         self._metric = metric
         self._permutation = permutation

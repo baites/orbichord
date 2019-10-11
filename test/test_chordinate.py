@@ -9,13 +9,13 @@ from orbichord.chordinate import *
 chord = Chord('C E G')
 
 
-def test_scalarPoint():
-    """Test scalarPoint module method."""
+def test_scalePoint():
+    """Test scalePoint module method."""
     scale = ChromaticScale('C')
-    scalar_point = scalarPoint(chord, scale)
+    scalar_point = scalePoint(chord, scale)
     assert scalar_point == [0, 4, 7]
     scale = MajorScale('C')
-    scalar_point = scalarPoint(chord, scale)
+    scalar_point = scalePoint(chord, scale)
     assert scalar_point == [0, 2, 4]
 
 
@@ -24,17 +24,13 @@ def test_standardSimplex():
     scale = ChromaticScale('C')
     standard_simplex = standardSimplex(chord, scale)
     assert standard_simplex == [11/12, 4/12, 3/12]
+    standard_simplex = standardSimplex(chord, scale, False)
+    assert standard_simplex == [11, 4, 3]
     scale = MajorScale('C')
     standard_simplex = standardSimplex(chord, scale)
     assert standard_simplex == [6/7, 2/7, 2/7]
-
-
-def test_interscalarVector():
-    """Test interscalarVector module method."""
-    scale = MajorScale('C')
-    ref_chord = Chord('F B D')
-    delta = interscalarVector(chord, ref_chord, scale)
-    assert delta == [3, -3, -3]
+    standard_simplex = standardSimplex(chord, scale, False)
+    assert standard_simplex == [6, 2, 2]
 
 
 def test_interscalarMatrix():
@@ -43,25 +39,6 @@ def test_interscalarMatrix():
     ref_chord = Chord('F B D')
     delta = interscalarMatrix(chord, ref_chord, scale)
     assert delta == [[1, 1, 2], [3, -3, -3], [-1, -1, -1]]
-
-
-def test_VoiceLeading():
-    """Test VoiceLeading module class."""
-    D_minor_scale = MinorScale('D')
-    D_minor_scale = Chord(D_minor_scale.getPitches('D4', 'C5'))
-    E_major_scale = MajorScale('E')
-    E_major_scale = Chord(E_major_scale.getPitches('E4', 'D#5'))
-    scale = ChromaticScale('C')
-    voice_leading = VoiceLeading(
-        scale = ChromaticScale('C'),
-        metric = lambda delta: la.norm(delta, inf)
-    )
-    vl, dist = voice_leading(
-        D_minor_scale,
-        E_major_scale,
-    )
-    assert vl == [2, 2, 3, 2, 2, 3, 3]
-    assert dist == 3.0
 
 
 def test_EfficientVoiceLeading():

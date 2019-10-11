@@ -18,10 +18,9 @@ class IdentifiedChord(Chord):
             Argument pass to chord constructor.
         keywords :
             Argument pass to chord constructor.
-
+            
     Examples
     --------
-
     >>> from orbichord.chord import IdentifiedChord
     >>> C = IdentifiedChord(notes = 'C4 E4 G4')
     >>> print(C.orderedPitchClassesString)

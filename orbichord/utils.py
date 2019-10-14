@@ -11,7 +11,8 @@ import uuid
 def showMusicXML(xml):
     """Show music xml using javascript.
 
-    Reference:
+    References
+    ----------
         https://notebooks.azure.com/OUsefulInfo/projects/gettingstarted/html/4.1.0%20Music%20Notation.ipynb
     """
     DIV_ID = "OSMD-div-"+str(random.randint(0,1000000))
@@ -63,7 +64,8 @@ def showMusicXML(xml):
 def renderWithJS(stream):
     """Show a using javascript.
 
-    Reference:
+    References
+    ----------
         https://notebooks.azure.com/OUsefulInfo/projects/gettingstarted/html/4.1.0%20Music%20Notation.ipynb
     """
     xml = open(stream.write('musicxml')).read()
@@ -71,10 +73,12 @@ def renderWithJS(stream):
 
 
 def renderWithLily(stream):
+    """Render LilyPond in Jupyter notebook."""
     return Image(filename=str(stream.write('lily.png')))
 
 
 def playAudio(stream):
+    """Generate audio play from stream."""
     midi = stream.write('midi')
     fs = FluidSynth('/usr/share/soundfonts/FluidR3_GM.sf2')
     filename = 'audio-{}.wav'.format(uuid.uuid4().hex)

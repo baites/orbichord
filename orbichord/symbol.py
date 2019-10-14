@@ -15,6 +15,7 @@ def hasChordSymbolFigure(chord : Chord) -> bool:
     ----------
         chord : Chord
             Chord to be identified.
+
     Return
     ------
         bool:
@@ -38,6 +39,7 @@ def chordSymbolFigure(
             Chord to be identified.
         inversion : int
             Inversion index.
+
     Return
     ------
         str

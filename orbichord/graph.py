@@ -26,7 +26,9 @@ def createGraph(
         tolerance : Callable[[float], bool]
             Tolerance function.
         labed
-    Return:
+
+    Return
+    ------
         graph: Graph
             Networkx Graph object.
     """
@@ -69,7 +71,7 @@ def createGraph(
 def convertGraphToData(
     graph: Graph
 ):
-    """Convert a chrod graph to columnal dataset.
+    """Convert a chord graph to columnal dataset.
 
     Parameters
     ----------

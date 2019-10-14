@@ -5,9 +5,24 @@ from music21.chord import Chord
 from typing import Callable
 
 
-def base10toN(num, base=12):
+def base10toN(num: int, base: int=12):
     """Change to given base upto base 36 is supported.
-    http://code.activestate.com/recipes/577586-converts-from-decimal-to-any-base-between-2-and-26/
+
+    Parameters
+    ----------
+        num : int
+            Integer to be transform to new base.
+        base : int
+            Based to use write the integer.
+
+    Return
+    ------
+        str
+            String with number digits in new base.
+
+    References
+    ----------
+        * http://code.activestate.com/recipes/577586-converts-from-decimal-to-any-base-between-2-and-26/
     """
     converted_string = ""
     currentnum = num
@@ -29,6 +44,7 @@ def chordPitchClasses(chord : Chord) -> str:
     ----------
         chord : Chord
             Chord to be identified.
+
     Return
     ------
         str
@@ -45,6 +61,7 @@ def chordPitchNames(chord : Chord) -> str:
     ----------
         chord : Chord
             Chord to be identified.
+
     Return
     ------
         str
@@ -66,6 +83,7 @@ def chordSymbolIndex(chord : Chord) -> str:
     ----------
         chord : Chord
             Chord to be identified.
+
     Return
     ------
         str

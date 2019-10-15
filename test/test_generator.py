@@ -2,6 +2,35 @@ from orbichord.generator import *
 from orbichord.symbol import chordSymbolFigure
 from music21.scale import MajorScale
 
+reference_chords = {
+    'Am',
+    'Apedal',
+    'Asus2',
+    'BIt+6',
+    'Bdim',
+    'Bpedal',
+    'C',
+    'Cpedal',
+    'Cpower',
+    'CpoweraddA',
+    'CpoweraddB',
+    'Csus2',
+    'Dm',
+    'Dpedal',
+    'Dpower',
+    'DpoweraddB',
+    'Dsus2',
+    'Em',
+    'Epedal',
+    'Epower',
+    'EpoweraddF',
+    'F',
+    'Fpedal',
+    'Fsus2',
+    'G',
+    'Gpedal',
+    'Gsus2'}
+
 
 def test_common_Generator():
     """Test Generator module class."""
@@ -9,17 +38,10 @@ def test_common_Generator():
     chord_generator = Generator(
         pitches = scale.getPitches('C','B')
     )
-    reference_chords = set((
-        'Cpedal', 'Fpower', 'Cpower', 'Csus2', 'C',
-        'Am', 'Csus', 'F', 'Dpedal', 'Gpower',
-        'Dpower', 'Dsus2', 'Dm', 'Bdim', 'Dsus',
-        'G', 'Epedal', 'Apower', 'Epower', 'Em',
-        'Esus', 'Fpedal', 'BIt+6', 'Gpedal', 'Apedal','Bpedal',
-    ))
     generated_chords = set()
     for chord in chord_generator.run():
         generated_chords.add(
-            chordSymbolFigure(chord)
+            chordSymbolFigure(chord, inversion=0)
         )
     assert generated_chords <= reference_chords
     assert generated_chords >= reference_chords

@@ -131,6 +131,7 @@ def interscalarMatrix(
     chordA: Chord,
     chordB: Chord,
     scale: ConcreteScale,
+    cardinality: bool = True,
     permutation: Permutation = Permutation.ANY
 ) -> list:
     """Compute the interscalar matrix between two chords
@@ -143,6 +144,8 @@ def interscalarMatrix(
             Voice leading end chord
         scale : ConcreteScale
             Scale use a metric.
+        cardinality: bool, optional
+            If true chord cardinality is invariant.
         permutation : Permutation, optional
             Permutation invariance in the interscalar matrix.
 
@@ -165,10 +168,16 @@ def interscalarMatrix(
     >>> print(matrix)
     [[0, 0, 1], [2, 3, 3], [-2, -2, -2]]
     """
+    if chordA.multisetCardinality != chordB.multisetCardinality:
+        raise ValueError('Chords are not of the same dimension!')
+    if cardinality:
+        tmpA = chordA.removeRedundantPitchClasses(inPlace=False)
+        tmpB = chordB.removeRedundantPitchClasses(inPlace=False)
+        if tmpA.multisetCardinality == tmpB.multisetCardinality:
+            chordA = tmpA
+            chordB = tmpB
     pointA = scalePoint(chordA, scale)
     pointB = scalePoint(chordB, scale)
-    if len(pointA) != len(pointB):
-        raise ValueError('Chords are not of the same dimension!')
     if permutation == Permutation.ANY:
         pointA.sort(); pointB.sort()
     dimension = len(pointA)

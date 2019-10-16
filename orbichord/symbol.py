@@ -27,7 +27,8 @@ def hasChordSymbolFigure(chord : Chord) -> bool:
 
 def chordSymbolFigure(
         chord : Chord,
-        inversion : int = None
+        inversion : int = None,
+        enharmonic : int = 0
     ) -> str:
     """Identify chords based chord symbol figure.
 
@@ -37,8 +38,10 @@ def chordSymbolFigure(
     ----------
         chord : Chord
             Chord to be identified.
-        inversion : int
+        inversion : int, optional
             Inversion index.
+        enharmonic : int, optional
+            Enharmonic index
 
     Return
     ------
@@ -50,7 +53,7 @@ def chordSymbolFigure(
         return chord.pitchClasses
     figure, inversions = SYMBOL_INDEX_TO_FIGURE[key]
     if inversion is None:
-        return figure
+        return figure[enharmonic]
     key = inversions[inversion]
     figure, _ = SYMBOL_INDEX_TO_FIGURE[key]
-    return figure
+    return figure[enharmonic]

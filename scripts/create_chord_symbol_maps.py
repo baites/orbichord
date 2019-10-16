@@ -24,6 +24,7 @@ for add1 in range(13):
             basses = [None] + list(ref.pitches)[1:]
             inversions = []
             for bass in basses:
+                bass = bass.name if bass else None
                 chord = harmony.ChordSymbol(
                     root = root,
                     kind = kind,
@@ -31,18 +32,20 @@ for add1 in range(13):
                 )
                 if add1 > 0: chord.add(add1-1)
                 key = chordSymbolIndex(chord)
-                if key in chords:
-                    continue
                 try:
-                    value = harmony.chordSymbolFigureFromChord(chord)
+                    name = harmony.chordSymbolFigureFromChord(chord)
                 except:
                     continue
-                if value == 'Chord Symbol Cannot Be Identified':
+                if name == 'Chord Symbol Cannot Be Identified':
                     continue
-                inversions.append(key)
-                chords[key] = value
+                if key not in chords:
+                    inversions.append(key)
+                names, _ = chords.setdefault(key, [[], None])
+                if name in names:
+                    continue
+                names.append(name)
             for key in inversions:
-                chords[key] = (chords[key], inversions)
+                chords[key][1] = inversions
 
 # Save in file
 with open('maps.py', 'w') as file:

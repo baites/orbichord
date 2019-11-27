@@ -273,7 +273,8 @@ class EfficientVoiceLeading:
         voice_leading_distance = None
         voice_leading_index = None
         matrix = interscalarMatrix(
-            chordA, chordB, self._scale, self._permutation
+            chordA, chordB, self._scale,
+            permutation=self._permutation
         )
         for index in range(len(matrix)):
             voice_leading = matrix[index]

@@ -1,6 +1,6 @@
 matplotlib
 midi2audio
-music21
+music21==5.5.0
 networkx
 numpy
 pbr

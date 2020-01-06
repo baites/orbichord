@@ -9,7 +9,10 @@ The inspiration for this tool is from the following references:
 
 # Installation
 
+Note: The installation examples are based on archlinux.
+
 ```bash
+$ sudo pacman -S python-pygame
 $ mkvirtualenv orbichord
 (orbichord)$ git clone https://github.com/orbichord/orbichord.git
 (orbichord)$ pip install -U .

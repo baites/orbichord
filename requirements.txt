@@ -1,8 +1,11 @@
 matplotlib
 midi2audio
-music21==5.5.0
+music21>=5.7.2
 networkx
 numpy
 pbr
+pyaudio
+pygame
 pytest
+scipy
 tox

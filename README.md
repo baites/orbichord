@@ -9,58 +9,67 @@ The inspiration for this tool is from the following references:
 
 # Installation
 
-Note: The installation examples are based on archlinux.
+* Cloning and creating docker image
+
+**NOTE**: This installation requires installed docker server.
 
 ```bash
-$ sudo pacman -S python-pygame
-$ mkvirtualenv orbichord
-(orbichord)$ git clone https://github.com/orbichord/orbichord.git
-(orbichord)$ pip install -U .
+$ mkdir orbichord
+$ cd orbichord
+$ git clone https://github.com/orbichord/documentation.git
+$ git clone https://github.com/orbichord/orbichord.git
+$ docker build -t orbichord -f orbichord.dockerfile .
+...
+Successfully tagged orbichord:latest
 ```
 
-# Integration with holoviews and jupyter notebooks
-
-* Install jupyter
+* Creating container
 
 ```bash
-$ sudo pacman -S jupyterlab
-$ sudo jupyter labextension install @pyviz/jupyterlab_pyviz
+$ USER_ID=$(id -u)
+$ USER_NAME=$(id -un)
+$ GROUP_ID=$(id -g)
+$ GROUP_NAME=$(id -gn)
+$ docker create \
+--name orbichord-$USER_NAME \
+--mount type=bind,source=$PWD,target=/home/$USER_NAME/orbichord \
+--mount type=bind,source=$HOME/.ssh,target=/home/$USER_NAME/.ssh \
+--workdir /home/$USER_NAME/orbichord \
+-t -p 8888:8888 orbichord
+$ docker start orbichord-$USER_NAME
 ```
 
-* Enable ipykernel in virtualenv orbichord
+* Mirror user and group to the container
 
 ```bash
-$ workon orbichord
-(orbichord)$ pip install ipykernel
-(orbichord)$ python -m ipykernel install --user --name=orbichord
+$ CMD="useradd -u $USER_ID -N $USER_NAME && \
+groupadd -g $GROUP_ID $GROUP_NAME && \
+usermod -g $GROUP_NAME $USER_NAME &&\
+echo '$USER_NAME ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/$USER_NAME &&\
+chown -R $USER_NAME:$GROUP_NAME /home/$USER_NAME"
+docker exec orbichord-$USER_NAME /bin/bash -c "$CMD"
 ```
 
-* Check ipykernel in virtualenv
+* Entering in the container install orbichord
 
 ```bash
-$ jupyter kernelspec list
+$ docker exec -it -u $USER_NAME orbichord-$USER_NAME /bin/bash
+$USER_NAME@bcfa7ea7eb52 orbichord$ sudo pip install orbichord
+...
+$USER_NAME@bcfa7ea7eb52 orbichord$ jupyter lap --ip 0.0.0.0
+...
 ```
-
-* ONLY IF YOU HAVE TO: how to remove a kernel
-```bash
-jupyter kernelspec remove myenv
-```
-
-* Install holoviews
-
-```bash
-$ workon orbichord
-(orbichord)$ pip install "holoviews[recommended]"
-(orbichord)$ pip install plotly
-```
-
-* Start jupyter lab
-
-```bash
-$ cd {location of orbifold}
-$ jupyter lab
-```
+* Open *browser* in the localhost url.
 
 * Examples:
-  * Pure python examples in ./example directory.
-  * Jupyter notebook example in ./jupyter directory.
+  * Pure python examples in orbichord/example directory.
+  * Jupyter notebook examples in documentation/source/user_guide directory.
+
+# Generating documentation
+
+**Note**: I this step assumes previous steps were executed.
+
+```bash
+$USER_NAME@bcfa7ea7eb52 orbichord$ cd documentation
+$USER_NAME@bcfa7ea7eb52 documentation$ make html
+```
